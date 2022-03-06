@@ -96,6 +96,6 @@ for i=0,512-1 do
 end
 
 map={}
-for y=0,24 do for x=0,24 do
-  map[posstr(x,y)]= perlin(y*.1,x*.1,247247)
+for y=0,12-1 do for x=0,24-1 do
+  map[posstr(x,y)]= perlin(y*.1,x*.1,2472472)
 end end

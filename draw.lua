@@ -65,7 +65,7 @@ function draw()
     fg(palettes[8])
     for k,v in pairs(map) do
         local px,py= strpos(k)
-        if not (px==elf.x and py==elf.y) then
+        if not (px==elf.x and py==elf.y) and not (py==0 and px<#'Hello world!') then
         lg.print(dex[1][flr(v*#dex[1])+1], 16+px*64, 16+py*(64+11))
         end
     end
@@ -78,10 +78,12 @@ end
 function gridprint(msg,mx,my)
     mx=mx or 0
     my=my or 0
+    mx=mx*64
+    my=my*(64+11)
     for i=1,#msg do
-        lg.print(sub(msg,i,i),mx+48-hoverfon:getWidth(sub(msg,i,i))/2,my)
+        lg.print(sub(msg,i,i),mx+48-hoverfon:getWidth(sub(msg,i,i))/2,my+7)
         mx=mx+64
-        if mx>16*2+64*13 then mx=0; my=my+64 end
+        if mx>=16*2+64*24-64 then mx=0; my=my+64+11 end
     end
 end
 

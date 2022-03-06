@@ -1,7 +1,7 @@
 function love.conf(t)
     t.window.title = 'by verysoftwares.itch.io'         -- The window title (string)
     t.window.icon = nil                 -- Filepath to an image to use as the window's icon (string)
-    t.window.width = 16*2+64*20                -- The window width (number)
+    t.window.width = 16*2+64*24                -- The window width (number)
     t.window.height = 16*2+(64+11)*12               -- The window height (number)
 
     t.console = true                   -- Attach a console (boolean, Windows only)
