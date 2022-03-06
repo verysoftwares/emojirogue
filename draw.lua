@@ -65,9 +65,24 @@ function draw()
     fg(palettes[8])
     for k,v in pairs(map) do
         local px,py= strpos(k)
+        if not (px==elf.x and py==elf.y) then
         lg.print(dex[1][flr(v*#dex[1])+1], 16+px*64, 16+py*(64+11))
+        end
     end
+    lg.setFont(hoverfon)
+    gridprint('Hello world!')
+    lg.setFont(emojifon)
     lg.print('😋',16+elf.x*64,16+elf.y*(64+11))
+end
+
+function gridprint(msg,mx,my)
+    mx=mx or 0
+    my=my or 0
+    for i=1,#msg do
+        lg.print(sub(msg,i,i),mx+48-hoverfon:getWidth(sub(msg,i,i))/2,my)
+        mx=mx+64
+        if mx>16*2+64*13 then mx=0; my=my+64 end
+    end
 end
 
 love.draw= draw
