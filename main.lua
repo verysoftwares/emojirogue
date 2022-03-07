@@ -5,13 +5,13 @@
         require 'alias'
         require 'utility'
     -- world
+        require 'dex'
         require 'space'
         require 'perlin'
     -- game data
-        require 'dex'
         require 'update'
         require 'draw'
 
 t = 0
 -- runtime.
-    print(fmt('made by emuurom collective with Löve %d.%d', love.getVersion()))
+    print(fmt('made by verysoftwares with LOVE %d.%d', love.getVersion()))

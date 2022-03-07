@@ -97,5 +97,5 @@ end
 
 map={}
 for y=0,12-1 do for x=0,24-1 do
-  map[posstr(x,y)]= perlin(y*.1,x*.1,2472472)
+  map[posstr(x,y)]= {dex[1][flr(perlin(y*.1,x*.1,2472472)*#dex[1])+1]}
 end end

@@ -35,6 +35,8 @@ palettes={
     {.80,.55,.80},
 }
 --for i=1,13*6 do ins(palettes,{randomchoice(pal),randomchoice(pal),randomchoice(pal)}) end
+
+cam={x=0,y=0}
     
 function draw()
     bg(.2 +.8 *( t     *.1 *.2) %1, 
@@ -66,7 +68,7 @@ function draw()
     for k,v in pairs(map) do
         local px,py= strpos(k)
         if not (px==elf.x and py==elf.y) and not (py==0 and px<#'Hello world!') then
-        lg.print(dex[1][flr(v*#dex[1])+1], 16+px*64, 16+py*(64+11))
+        lg.print(v[1], 16+px*64, 16+py*(64+11))
         end
     end
     lg.setFont(hoverfon)
