@@ -65,16 +65,21 @@ function draw()
     end
 
     fg(palettes[8])
-    for k,v in pairs(map) do
-        local px,py= strpos(k)
-        if not (px==elf.x and py==elf.y) and not (py==0 and px<#'Hello world!') then
+    --for k,v in pairs(map) do
+    for py=cam.y,cam.y+12-1 do
+    for px=cam.x,cam.x+24-1 do
+        if not (px==😋.x and py==😋.y) and not (py==0 and px<#'Hello world!') then
+        local v=map[posstr(px,py)]
+        if v then
         lg.print(v[1], 16+px*64, 16+py*(64+11))
         end
+        end
+    end
     end
     lg.setFont(hoverfon)
     gridprint('Hello world!')
     lg.setFont(emojifon)
-    lg.print('😋',16+elf.x*64,16+elf.y*(64+11))
+    lg.print('😋',16+(😋.x-cam.x)*64,16+(😋.y-cam.y)*(64+11))
 end
 
 function gridprint(msg,mx,my)
