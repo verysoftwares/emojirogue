@@ -148,6 +148,12 @@ function 🐴_wander(pos)
     end
 end
 
-map[posstr(26+1+2,3+4-2+1+2)]={'🐴',f=🐴_wander}
-map[posstr(24*2-12-2+2,3+4-5+1+2)]={'🐴',f=🐴_wander}
-map[posstr(24*2-7+2,3+4-2+2+1)]={'🐴',f=🐴_wander}
+map[posstr(26+1+2,3+4-2+1+2)]={'🐴',f=🐴_wander,t=function(🐴) start_dialogue('baobab_craft') end}
+map[posstr(24*2-12-2+2,3+4-5+1+2)]={'🐴',f=🐴_wander,t=function(🐴) 
+if not 🐴.diag then 🐴.diag=1 end
+local prog={'baobab_boo','baobab_oob','baobab_abba'}
+start_dialogue(prog[🐴.diag])
+🐴.diag=🐴.diag+1
+if 🐴.diag>3 then 🐴.diag=1 end 
+end}
+map[posstr(24*2-7+2,3+4-2+2+1)]={'🐴',f=🐴_wander,t=function(🐴) end}
