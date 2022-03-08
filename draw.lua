@@ -68,7 +68,7 @@ function draw()
     --for k,v in pairs(map) do
     for py=cam.y,cam.y+12-1 do
     for px=cam.x,cam.x+24-1 do
-        if not (px==😋.x and py==😋.y) and not (py==0 and px<#'Hello world!') then
+        if not (px==😋.x and py==😋.y) and not (py==0 and px<utf8.len(header.msg)) then
         local v=map[posstr(px,py)]
         if v then
         if emojifon:hasGlyphs(v[1]) then
@@ -83,9 +83,21 @@ function draw()
     end
     end
     lg.setFont(hoverfon)
-    gridprint('Hello world!')
+    gridprint(header.msg)
     lg.setFont(emojifon)
     lg.print('😋',16+(😋.x-cam.x)*64,16+(😋.y-cam.y)*(64+11))
+
+    if love.update==dialogue then
+        local r,g,b,a=lg.getColor()
+        for dy=8,12-1 do
+        for dx=0,24-1 do
+            fg(0.2,0.2,0.6)
+            rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
+            gridprint(utf8.sub(cur_diag[cur_diag.i][1],1,cur_diag[cur_diag.i].j),1,9)
+        end
+        end
+        fg(r,g,b,a)
+    end
 end
 
 function gridprint(msg,mx,my)
@@ -93,8 +105,21 @@ function gridprint(msg,mx,my)
     my=my or 0
     mx=mx*64
     my=my*(64+11)
-    for i=1,#msg do
-        lg.print(sub(msg,i,i),mx+48-hoverfon:getWidth(sub(msg,i,i))/2,my+7)
+    for i=1,utf8.len(msg) do
+        fg(palettes[8])
+        lg.setFont(hoverfon)
+        local g=utf8.sub(msg,i,i)
+        if dex_pal[g] then fg(dex_pal[g])
+        else fg(palettes[8]) end
+        if hoverfon:hasGlyphs(g) then
+        lg.print(g,mx+48-hoverfon:getWidth(g)/2,my+7)
+        elseif emojifon:hasGlyphs(g) then
+        lg.setFont(emojifon)
+        lg.print(g,16+mx,16+my)
+        else
+        lg.setFont(emojifon2)
+        lg.print(g,16+mx,16+my)
+        end
         mx=mx+64
         if mx>=16*2+64*24-64 then mx=0; my=my+64+11 end
     end
