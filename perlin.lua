@@ -127,8 +127,8 @@ end
 for i=0,24-1 do
     map[posstr(i+24,0)]={'⛰️'}
     map[posstr(i+24,1)]={'⛰️'}
-    if (i>2 and i<10) or (i>16 and i<21) then map[posstr(i+24,2)]={'⛰️'} end
-    if i==10 then map[posstr(i+24,2)]={'🔽'} end
+    if (i>2 and i<11) or (i>16 and i<21) then map[posstr(i+24,2)]={'⛰️'} end
+    if i==11 then map[posstr(i+24,2)]={'🔽'} end
 end
 
 function solid(pos)
