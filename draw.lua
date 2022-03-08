@@ -96,14 +96,53 @@ function draw()
         for dx=0,24-1 do
             fg(0.2,0.2,0.6)
             rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
-            gridprint(cur_diag[cur_diag.i][1],1,9,true)
         end
         end
+        fg(palettes[8])
+        gridprint(cur_diag[cur_diag.i][1],1,9,true)
+        if cur_diag[cur_diag.i].choice and cur_diag[cur_diag.i].j==utf8.len(cur_diag[cur_diag.i][1]) then
+            local len=1
+            for i,v in ipairs(cur_diag[cur_diag.i].choice) do
+                len=len+utf8.len(v)+1
+            end
+            local l=0
+            for i,v in ipairs(cur_diag[cur_diag.i].choice) do
+                local rv=v
+                if i==cur_diag[cur_diag.i].choice.i then
+                    rv=fmt('[%s]',v)
+                end
+                gridprint(rv,12-flr(len/2)+l,11)
+                l=l+utf8.len(rv)+1
+            end
+        end
+        fg(r,g,b,a)
+    end
+
+    if love.update==craft then
+        local r,g,b,a=lg.getColor()
+        for dy=8,12-1 do
+        for dx=0,24-1 do
+            fg(0.2,0.2,0.6)
+            if (dy==9 and dx>0 and dx<=5) or dy==11 then fg(0.8,0.8,0.8) end
+            if dy==8 then fg(palettes[8]) end
+            if dy==11 and dx==inventory.i then fg(0.4,0.8,0.4) end
+            rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
+        end
+        end
+        for i,v in ipairs(craft_area) do
+            gridprint(v[1],i,9)
+        end
+        for i,v in ipairs(inventory) do
+            gridprint(v[1],i,11)
+            if i>=22 then break end
+        end
+        fg(0.2,0.2,0.6)
+        gridprint('Craft:',1,8,true,true)
         fg(r,g,b,a)
     end
 end
 
-function gridprint(msg,mx,my,diag)
+function gridprint(msg,mx,my,diag,setcolor)
     mx=mx or 0
     my=my or 0
     mx=mx*64
@@ -111,11 +150,11 @@ function gridprint(msg,mx,my,diag)
     local ed=utf8.len(msg)
     if diag then ed=utf8.len(utf8.sub(msg,1,cur_diag[cur_diag.i].j)) end
     for i=1,ed do
-        fg(palettes[8])
+        --fg(palettes[8])
         lg.setFont(hoverfon)
         local g=utf8.sub(msg,i,i)
         if dex_pal[g] then fg(dex_pal[g])
-        else fg(palettes[8]) end
+        else if not setcolor then fg(palettes[8]) end end
         if hoverfon:hasGlyphs(g) then
         lg.print(g,mx+48-hoverfon:getWidth(g)/2,my+7)
         elseif emojifon:hasGlyphs(g) then
@@ -128,7 +167,7 @@ function gridprint(msg,mx,my,diag)
         mx=mx+64
         if g==' ' then 
             local nextword=utf8.sub(msg,i+1,utf8.find(msg,' ',i+1))
-            local mw=16*2+64*24-64
+            local mw=16*2+64*24
             if diag then mw=mw-64 end
             if mx+utf8.len(nextword)*64>=mw then if diag then mx=64 else mx=0 end; my=my+64+11 end
         end
