@@ -63,7 +63,8 @@ function dialogue()
             cur_diag[cur_diag.i].j=utf8.len(cur_diag[cur_diag.i][1])
         else
             cur_diag.i=cur_diag.i+1
-            if not cur_diag[cur_diag.i] then love.update=update return end
+            if not cur_diag[cur_diag.i] then love.update=update; return 
+            else cur_diag[cur_diag.i].j=cur_diag[cur_diag.i].j or 1 end
         end
     end
     if t%3==0 then 
