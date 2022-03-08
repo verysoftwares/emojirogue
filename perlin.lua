@@ -99,3 +99,27 @@ map={}
 for y=0,12-1 do for x=0,24-1 do
   map[posstr(x,y)]= {dex[1][flr(perlin(y*.1,x*.1,2472472)*#dex[1])+1]}
 end end
+
+for my=0,4 do
+for mx=0,4 do
+map[posstr(26+1+mx,3+4-2+1)]={'🧱'}
+if not (mx==2) then
+map[posstr(26+1+mx,3+4+4-2+1)]={'🧱'}
+end
+map[posstr(26+1,3+4-2+my+1)]={'🧱'}
+map[posstr(26+1+4,3+4-2+my+1)]={'🧱'}
+
+map[posstr(24*2-12-2+mx,3+4-5+1)]={'🧱'}
+if not (mx==2) then
+map[posstr(24*2-12-2+mx,3+4-5+4+1)]={'🧱'}
+end
+map[posstr(24*2-12-2,3+4-5+my+1)]={'🧱'}
+map[posstr(24*2-12-2+4,3+4-5+my+1)]={'🧱'}
+
+map[posstr(24*2-7+mx,3+4-2+1)]={'🧱'}
+map[posstr(24*2-7+4,3+4-2+my+1)]={'🧱'}
+if not (mx==2) then
+map[posstr(24*2-7+mx,3+4+4-2+1)]={'🧱'}
+end
+map[posstr(24*2-7,3+4-2+my+1)]={'🧱'}end
+end
