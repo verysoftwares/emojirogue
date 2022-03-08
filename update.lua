@@ -3,8 +3,6 @@
 function update(hw_dt)
     if tapped('r') then love.event.quit('restart') end
 
-    if tapped('t') then love.update=talkselect; shout('Talk to whom?') end
-
     local moved=false
     if not moved and not solid(posstr(😋.x,😋.y-1)) and tapped('up')    then 😋.y=😋.y-1; moved=true end
     if not moved and not solid(posstr(😋.x,😋.y+1)) and tapped('down')  then 😋.y=😋.y+1; moved=true end
@@ -12,8 +10,6 @@ function update(hw_dt)
     if not moved and not solid(posstr(😋.x+1,😋.y)) and tapped('right') then 😋.x=😋.x+1; moved=true end
 
     if moved then
-        header.msg='Hello world!'
-
         if 😋.y>=cam.y+12 then cam.y=cam.y+12 end
         if 😋.x>=cam.x+24 then cam.x=cam.x+24 end
         if 😋.y<cam.y then cam.y=cam.y-12 end
