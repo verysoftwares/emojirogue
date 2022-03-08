@@ -68,15 +68,17 @@ function draw()
     --for k,v in pairs(map) do
     for py=cam.y,cam.y+12-1 do
     for px=cam.x,cam.x+24-1 do
-        if not (px==😋.x and py==😋.y) and not (py==0 and px<utf8.len(header.msg)) then
+        if not (px==😋.x and py==😋.y) and not (py==0 and px<cam.x+utf8.len(header.msg)) then
         local v=map[posstr(px,py)]
         if v then
+        if dex_pal[v[1]] then fg(dex_pal[v[1]])
+        else fg(palettes[8]) end
         if emojifon:hasGlyphs(v[1]) then
         lg.setFont(emojifon)
         lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))
         else
         lg.setFont(emojifon2)
-        lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))
+        lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11)-5)
         end
         end
         end
@@ -85,6 +87,7 @@ function draw()
     lg.setFont(hoverfon)
     gridprint(header.msg)
     lg.setFont(emojifon)
+    fg(dex_pal['😋'])
     lg.print('😋',16+(😋.x-cam.x)*64,16+(😋.y-cam.y)*(64+11))
 
     if love.update==dialogue then
@@ -93,19 +96,21 @@ function draw()
         for dx=0,24-1 do
             fg(0.2,0.2,0.6)
             rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
-            gridprint(utf8.sub(cur_diag[cur_diag.i][1],1,cur_diag[cur_diag.i].j),1,9)
+            gridprint(cur_diag[cur_diag.i][1],1,9,true)
         end
         end
         fg(r,g,b,a)
     end
 end
 
-function gridprint(msg,mx,my)
+function gridprint(msg,mx,my,diag)
     mx=mx or 0
     my=my or 0
     mx=mx*64
     my=my*(64+11)
-    for i=1,utf8.len(msg) do
+    local ed=utf8.len(msg)
+    if diag then ed=utf8.len(utf8.sub(msg,1,cur_diag[cur_diag.i].j)) end
+    for i=1,ed do
         fg(palettes[8])
         lg.setFont(hoverfon)
         local g=utf8.sub(msg,i,i)
@@ -118,10 +123,15 @@ function gridprint(msg,mx,my)
         lg.print(g,16+mx,16+my)
         else
         lg.setFont(emojifon2)
-        lg.print(g,16+mx,16+my)
+        lg.print(g,16+mx,16+my-5)
         end
         mx=mx+64
-        if mx>=16*2+64*24-64 then mx=0; my=my+64+11 end
+        if g==' ' then 
+            local nextword=utf8.sub(msg,i+1,utf8.find(msg,' ',i+1))
+            local mw=16*2+64*24-64
+            if diag then mw=mw-64 end
+            if mx+utf8.len(nextword)*64>=mw then if diag then mx=64 else mx=0 end; my=my+64+11 end
+        end
     end
 end
 

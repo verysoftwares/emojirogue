@@ -124,8 +124,15 @@ end
 map[posstr(24*2-7,3+4-2+my+1)]={'🧱'}end
 end
 
+for i=0,24-1 do
+    map[posstr(i+24,0)]={'⛰️'}
+    map[posstr(i+24,1)]={'⛰️'}
+    if (i>2 and i<10) or (i>16 and i<21) then map[posstr(i+24,2)]={'⛰️'} end
+    if i==10 then map[posstr(i+24,2)]={'🔽'} end
+end
+
 function solid(pos)
-    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴')
+    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️')
 end
 
 function oob(pos)
@@ -156,4 +163,4 @@ start_dialogue(prog[🐴.diag])
 🐴.diag=🐴.diag+1
 if 🐴.diag>3 then 🐴.diag=1 end 
 end}
-map[posstr(24*2-7+2,3+4-2+2+1)]={'🐴',f=🐴_wander,t=function(🐴) end}
+map[posstr(24*2-7+2,3+4-2+2+1)]={'🐴',f=🐴_wander,t=function(🐴) start_dialogue('baobab_dungeon') end}
