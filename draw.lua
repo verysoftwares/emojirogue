@@ -71,7 +71,13 @@ function draw()
         if not (px==😋.x and py==😋.y) and not (py==0 and px<#'Hello world!') then
         local v=map[posstr(px,py)]
         if v then
-        lg.print(v[1], 16+px*64, 16+py*(64+11))
+        if emojifon:hasGlyphs(v[1]) then
+        lg.setFont(emojifon)
+        lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))
+        else
+        lg.setFont(symbolfon)
+        lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))
+        end
         end
         end
     end
