@@ -123,3 +123,31 @@ map[posstr(24*2-7+mx,3+4+4-2+1)]={'🧱'}
 end
 map[posstr(24*2-7,3+4-2+my+1)]={'🧱'}end
 end
+
+function solid(pos)
+    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴')
+end
+
+function oob(pos)
+    local px,py=strpos(pos)
+    return px<cam.x or py<cam.y or px>=cam.x+24 or py>=cam.y+12
+end
+
+function 😋collide(pos)
+    local px,py=strpos(pos)
+    return px==😋.x and py==😋.y
+end
+
+function 🐴_wander(pos)
+    local mx,my=strpos(pos)
+    local newpos=posstr(mx+random(-1,1),my+random(-1,1))
+    if not map[newpos] and not 😋collide(newpos) and not oob(newpos) then
+    local 🐴=map[pos]
+    map[pos]=nil
+    map[newpos]=🐴
+    end
+end
+
+map[posstr(26+1+2,3+4-2+1+2)]={'🐴',f=🐴_wander}
+map[posstr(24*2-12-2+2,3+4-5+1+2)]={'🐴',f=🐴_wander}
+map[posstr(24*2-7+2,3+4-2+2+1)]={'🐴',f=🐴_wander}
