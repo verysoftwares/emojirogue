@@ -75,7 +75,7 @@ function draw()
         lg.setFont(emojifon)
         lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))
         else
-        lg.setFont(symbolfon)
+        lg.setFont(emojifon2)
         lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))
         end
         end
