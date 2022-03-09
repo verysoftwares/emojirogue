@@ -175,9 +175,48 @@ function map_empty()
 end
 
 function cavegen()
-for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
-    if perlin(y*.35,x*.35,24724)<0.5 then
-    map[posstr(x,y)]= {'⛰️'}
+    for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
+        if perlin(y*.35,x*.35,24724)<0.5 then
+        map[posstr(x,y)]= {'⛰️'}
+        end
+    end end
+    filled={}
+    for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
+        if not map[posstr(x,y)] and not findany(filled,posstr(x,y)) then
+            floodfill(x,y)
+        end
+    end end
+    for i,v in ipairs(filled) do
+        print(fmt('section %d has %d open tiles',i,#v))
     end
-end end
+    local s=random(#filled[1])
+    local spawnpoint=filled[1][s]
+    rem(filled[1],s)
+    -- player is still standing upstairs
+    map[spawnpoint]={'🔼',entry=posstr(😋.x,😋.y)}
+    map[posstr(😋.x,😋.y)].entry=spawnpoint
+    local sx,sy=strpos(spawnpoint)
+    😋.x=sx; 😋.y=sy
+    s=random(#filled[1])
+    local downstairs=filled[1][s]
+    rem(filled[1],s)
+    map[downstairs]={'🔽'}
+end
+
+filled={}
+function floodfill(cx,cy)
+    local out={posstr(cx,cy)}
+    for i,v in ipairs(out) do
+        local px,py=strpos(v)
+        if px-1>=cam.x and not map[posstr(px-1,py)] and not find(out,posstr(px-1,py)) then ins(out,posstr(px-1,py)) end
+        if px-1>=cam.x and py-1>=cam.y and not map[posstr(px-1,py-1)] and not find(out,posstr(px-1,py-1)) then ins(out,posstr(px-1,py-1)) end
+        if py-1>=cam.y and not map[posstr(px,py-1)] and not find(out,posstr(px,py-1)) then ins(out,posstr(px,py-1)) end
+        if px+1<cam.x+24 and py-1>=cam.y and not map[posstr(px+1,py-1)] and not find(out,posstr(px+1,py-1)) then ins(out,posstr(px+1,py-1)) end
+        if px+1<cam.x+24 and not map[posstr(px+1,py)] and not find(out,posstr(px+1,py)) then ins(out,posstr(px+1,py)) end
+        if px+1<cam.x+24 and py+1<cam.y+12 and not map[posstr(px+1,py+1)] and not find(out,posstr(px+1,py+1)) then ins(out,posstr(px+1,py+1)) end
+        if py+1<cam.y+12 and not map[posstr(px,py+1)] and not find(out,posstr(px,py+1)) then ins(out,posstr(px,py+1)) end
+        if px-1>=cam.x and py+1<cam.y+12 and not map[posstr(px-1,py+1)] and not find(out,posstr(px-1,py+1)) then ins(out,posstr(px-1,py+1)) end
+    end
+    ins(filled,out)
+    table.sort(filled,function(a,b) return #a>#b end)
 end

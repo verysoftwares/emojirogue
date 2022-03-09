@@ -15,7 +15,15 @@ function update(hw_dt)
         cam.y=cam.y-12
         if map_empty() then
             cavegen()
+        else 
+            local sx,sy=strpos(map[posstr(😋.x,😋.y)].entry)
+            😋.x=sx; 😋.y=sy
         end
+    end
+    if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔼' and tapped('<') then
+        cam.y=cam.y+12
+        local sx,sy=strpos(map[posstr(😋.x,😋.y)].entry)
+        😋.x=sx; 😋.y=sy
     end
 
     if moved then

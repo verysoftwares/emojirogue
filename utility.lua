@@ -14,6 +14,10 @@
     function find(tbl,what) for i,v in ipairs(tbl) do if v==what then return i end end
     end
 
+-- tier 2 find for nested tables
+    function findany(tbl,what) for i,v in ipairs(tbl) do for j,w in ipairs(v) do if w==what then return i end end end
+    end
+
 -- find by condition
     function findf(tbl,how) for i,v in ipairs(tbl) do if how(v) then return i end end
     end
