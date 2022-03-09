@@ -11,6 +11,13 @@ function update(hw_dt)
     if not moved and not solid(posstr(😋.x-1,😋.y)) and tapped('left')  then 😋.x=😋.x-1; moved=true end
     if not moved and not solid(posstr(😋.x+1,😋.y)) and tapped('right') then 😋.x=😋.x+1; moved=true end
 
+    if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔽' and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) and tapped('<') then
+        cam.y=cam.y-12
+        if map_empty() then
+            cavegen()
+        end
+    end
+
     if moved then
         header.msg='Hello world!'
 

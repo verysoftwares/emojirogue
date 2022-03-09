@@ -164,3 +164,20 @@ start_dialogue(prog[🐴.diag])
 if 🐴.diag>3 then 🐴.diag=1 end 
 end}
 map[posstr(24*2-7+2,3+4-2+2+1)]={'🐴',f=🐴_wander,t=function(🐴) start_dialogue('baobab_dungeon') end}
+
+function map_empty()
+    for my=cam.y,cam.y+12-1 do
+    for mx=cam.x,cam.x+24-1 do
+        if map[posstr(mx,my)] then return false end
+    end
+    end
+    return true
+end
+
+function cavegen()
+for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
+    if perlin(y*.35,x*.35,24724)<0.5 then
+    map[posstr(x,y)]= {'⛰️'}
+    end
+end end
+end

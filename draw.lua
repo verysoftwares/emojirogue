@@ -68,7 +68,7 @@ function draw()
     --for k,v in pairs(map) do
     for py=cam.y,cam.y+12-1 do
     for px=cam.x,cam.x+24-1 do
-        if not (px==😋.x and py==😋.y) and not (py==0 and px<cam.x+utf8.len(header.msg)) then
+        if not (px==😋.x and py==😋.y) and not (py==cam.y and px<cam.x+utf8.len(header.msg)) then
         local v=map[posstr(px,py)]
         if v then
         if dex_pal[v[1]] then fg(dex_pal[v[1]])
