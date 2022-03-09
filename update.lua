@@ -6,14 +6,14 @@ function update(hw_dt)
     if tapped('t') then love.update=talkselect; shout('Talk to whom?') end
 
     local moved=false
-    if not moved and not solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8'))    then 😋.y=😋.y-1; moved=true end
-    if not moved and not solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2'))  then 😋.y=😋.y+1; moved=true end
-    if not moved and not solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4'))  then 😋.x=😋.x-1; moved=true end
-    if not moved and not solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6')) then 😋.x=😋.x+1; moved=true end
-    if not moved and not solid(posstr(😋.x-1,😋.y-1)) and tapped('kp7') then 😋.x=😋.x-1; 😋.y=😋.y-1; moved=true end
-    if not moved and not solid(posstr(😋.x-1,😋.y+1)) and tapped('kp1') then 😋.x=😋.x-1; 😋.y=😋.y+1; moved=true end
-    if not moved and not solid(posstr(😋.x+1,😋.y-1)) and tapped('kp9') then 😋.x=😋.x+1; 😋.y=😋.y-1; moved=true end
-    if not moved and not solid(posstr(😋.x+1,😋.y+1)) and tapped('kp3') then 😋.x=😋.x+1; 😋.y=😋.y+1; moved=true end
+    if not moved and not solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then 😋.y=😋.y-1; moved=true end
+    if not moved and not solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then 😋.y=😋.y+1; moved=true end
+    if not moved and not solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4') or tapped('h'))  then 😋.x=😋.x-1; moved=true end
+    if not moved and not solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6') or tapped('k')) then 😋.x=😋.x+1; moved=true end
+    if not moved and not solid(posstr(😋.x-1,😋.y-1)) and (tapped('kp7') or tapped('y')) then 😋.x=😋.x-1; 😋.y=😋.y-1; moved=true end
+    if not moved and not solid(posstr(😋.x-1,😋.y+1)) and (tapped('kp1') or tapped('b')) then 😋.x=😋.x-1; 😋.y=😋.y+1; moved=true end
+    if not moved and not solid(posstr(😋.x+1,😋.y-1)) and (tapped('kp9') or tapped('i')) then 😋.x=😋.x+1; 😋.y=😋.y-1; moved=true end
+    if not moved and not solid(posstr(😋.x+1,😋.y+1)) and (tapped('kp3') or tapped('m')) then 😋.x=😋.x+1; 😋.y=😋.y+1; moved=true end
 
     if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔽' and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) and tapped('<') then
         cam.y=cam.y-12
