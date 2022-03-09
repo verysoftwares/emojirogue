@@ -6,10 +6,10 @@ function update(hw_dt)
     if tapped('t') then love.update=talkselect; shout('Talk to whom?') end
 
     local moved=false
-    if not moved and not solid(posstr(😋.x,😋.y-1)) and tapped('up')    then 😋.y=😋.y-1; moved=true end
-    if not moved and not solid(posstr(😋.x,😋.y+1)) and tapped('down')  then 😋.y=😋.y+1; moved=true end
-    if not moved and not solid(posstr(😋.x-1,😋.y)) and tapped('left')  then 😋.x=😋.x-1; moved=true end
-    if not moved and not solid(posstr(😋.x+1,😋.y)) and tapped('right') then 😋.x=😋.x+1; moved=true end
+    if not moved and not solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8'))    then 😋.y=😋.y-1; moved=true end
+    if not moved and not solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2'))  then 😋.y=😋.y+1; moved=true end
+    if not moved and not solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4'))  then 😋.x=😋.x-1; moved=true end
+    if not moved and not solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6')) then 😋.x=😋.x+1; moved=true end
     if not moved and not solid(posstr(😋.x-1,😋.y-1)) and tapped('kp7') then 😋.x=😋.x-1; 😋.y=😋.y-1; moved=true end
     if not moved and not solid(posstr(😋.x-1,😋.y+1)) and tapped('kp1') then 😋.x=😋.x-1; 😋.y=😋.y+1; moved=true end
     if not moved and not solid(posstr(😋.x+1,😋.y-1)) and tapped('kp9') then 😋.x=😋.x+1; 😋.y=😋.y-1; moved=true end
