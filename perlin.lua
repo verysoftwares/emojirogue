@@ -213,7 +213,7 @@ function cavegen()
         s=random(#filled[1])
         local 🐍pos=filled[1][s]
         rem(filled[1],s)
-        map[🐍pos]={'🐍',f=🐍_ai} 
+        map[🐍pos]={'🐍',f=🐍_ai,hp=3}
     end
 end
 
@@ -233,7 +233,7 @@ function 🐍_ai(pos)
     elseif 🐍.state=='located' then
         if #🐍.path>0 then
             local nextpos=🐍.path[1]
-            if not map[nextpos] or not solid(map[nextpos]) or (not map[pos].updated and map[nextpos].path) then
+            if not map[nextpos] or not solid(map[nextpos]) then
                 rem(🐍.path,1)
                 map[pos]=nil
                 map[nextpos]=🐍

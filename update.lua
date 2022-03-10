@@ -281,7 +281,9 @@ function throwselect()
     for i,v in ipairs(throwtgt) do
         if tapped(tostring(i)) then
             if inventory[inventory.i][1]=='🥛' then
-                --dmg(map[v])
+                map[v].hp=map[v].hp-2
+                shout(fmt('It hit the %s for 2 damage!',map[v][1]))
+                if map[v].hp<=0 then map[v]=nil end
             end
             rem(inventory,inventory.i)
             love.update=update
