@@ -213,7 +213,7 @@ function cavegen()
         s=random(#filled[1])
         local 🐍pos=filled[1][s]
         rem(filled[1],s)
-        map[🐍pos]={'🐍',f=🐍_ai,hp=3}
+        map[🐍pos]={'🐍',f=🐍_ai,hp=dex_nmy['🐍'].maxhp}
     end
 end
 

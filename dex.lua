@@ -46,3 +46,7 @@ dex_recipes={
     ['🌱🌱🥀']={'☕',name='SmolHeal Potion'},
     ['fail']={'💩',name='Failed potion'},
 }
+
+dex_nmy={
+    ['🐍']={maxhp=3},
+}
