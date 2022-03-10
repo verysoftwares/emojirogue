@@ -193,6 +193,59 @@ function raycast()
 end
 memo={}
 
+function enemy_raycast(pos)
+    local ex,ey=strpos(pos)
+    --enemy_rays={}
+    for i=0,530-1 do
+        local a=pi*2/530*i
+        local rx=ex*64+16+32
+        local ry=ey*(64+11)+16+32
+        while AABB(rx,ry,1,1,cam.x*64+16,cam.y*(64+11)+16,64*24,(64+11)*12) do
+            rx=rx+cos(a)*0.8
+            ry=ry+sin(a)*0.8
+            local tx,ty=flr((rx-16-32)/64),flr((ry-16-32)/(64+11))
+            if tx==😋.x and ty==😋.y then
+                enemy_pathfind(pos,{x=😋.x,y=😋.y})
+                return
+            end
+            if map[posstr(tx,ty)] then
+                --print(tx,ty,😋.x,😋.y,cam.x,cam.y)
+                --if not find(enemy_rays,posstr(tx,ty)) then ins(enemy_rays,posstr(tx,ty)) end
+                if solid(posstr(tx,ty)) then break end
+            end
+        end
+    end
+end
+
+function enemy_pathfind(pos,tgt)
+    local cx,cy=strpos(pos)
+    local out={{posstr(cx,cy)}}
+    for i,v in ipairs(out) do
+        local px,py=strpos(v[1])
+        if px==tgt.x and py==tgt.y then
+            map[pos].path={}
+            map[pos].state='located'
+            local pathtile=v
+            while pathtile do
+                ins(map[pos].path,1,pathtile[1])
+                pathtile=pathtile.prev
+            end
+            rem(map[pos].path,1) -- because it is just the starting tile
+            return
+        end
+        if px-1>=cam.x and not map[posstr(px-1,py)] and not find(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}) end
+        if px-1>=cam.x and py-1>=cam.y and not map[posstr(px-1,py-1)] and not find(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}) end
+        if py-1>=cam.y and not map[posstr(px,py-1)] and not find(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}) end
+        if px+1<cam.x+24 and py-1>=cam.y and not map[posstr(px+1,py-1)] and not find(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}) end
+        if px+1<cam.x+24 and not map[posstr(px+1,py)] and not find(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}) end
+        if px+1<cam.x+24 and py+1<cam.y+12 and not map[posstr(px+1,py+1)] and not find(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}) end
+        if py+1<cam.y+12 and not map[posstr(px,py+1)] and not find(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}) end
+        if px-1>=cam.x and py+1<cam.y+12 and not map[posstr(px-1,py+1)] and not find(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}) end
+        out[#out].prev=v
+    end
+
+end
+
 function in_dungeon()
     return cam.y<0
 end

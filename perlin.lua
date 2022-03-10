@@ -205,7 +205,34 @@ function cavegen()
         s=random(#filled[1])
         local 🐍pos=filled[1][s]
         rem(filled[1],s)
-        map[🐍pos]={'🐍'} 
+        map[🐍pos]={'🐍',f=🐍_ai} 
+    end
+end
+
+function 🐍_ai(pos)
+    local 🐍=map[pos]
+    if 🐍.state==nil then
+    local mx,my=strpos(pos)
+    local newpos=posstr(mx+random(-1,1),my+random(-1,1))
+    if not map[newpos] and not 😋collide(newpos) and not oob(newpos) then
+    map[pos]=nil
+    map[newpos]=🐍
+    enemy_raycast(pos)
+    end
+    elseif 🐍.state=='located' then
+        if #🐍.path>0 then
+        local nextpos=🐍.path[1]
+        if not map[nextpos] then
+        rem(🐍.path[1])
+        map[pos]=nil
+        map[nextpos]=🐍
+        end
+        else
+            🐍.state=nil
+            🐍_ai(pos)
+            return
+        end
+        enemy_raycast(pos)
     end
 end
 
