@@ -184,7 +184,7 @@ function craft()
     t=t+1
 end
 
-inventory={i=1,{'🌱'},{'🌱'},{'🌱'},{'🥀'},{'🌱'},{'🌱'}}
+inventory={i=1,{'🌱'},{'🌱'},{'🌱'},{'🥀'},{'🌱'},{'🌱'},{'🥛'}}
 craft_area={}
 
 function raycast()
@@ -284,6 +284,14 @@ function throwselect()
                 map[v].hp=map[v].hp-2
                 shout(fmt('It hit the %s for 2 damage!',map[v][1]))
                 if map[v].hp<=0 then map[v]=nil end
+            elseif inventory[inventory.i][1]=='☕' then
+                map[v].hp=map[v].hp+2
+                if map[v].hp>dex_nmy[map[v][1]].maxhp then
+                    map[v].hp=dex_nmy[map[v][1]].maxhp
+                end
+                shout(fmt('It healed the %s!',map[v][1]))
+            else
+                shout('It didn\'t do any damage.')
             end
             rem(inventory,inventory.i)
             love.update=update
