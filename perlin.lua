@@ -201,6 +201,12 @@ function cavegen()
     local downstairs=filled[1][s]
     rem(filled[1],s)
     map[downstairs]={'🔽'}
+    for i=1,random(3) do
+        s=random(#filled[1])
+        local 🐍pos=filled[1][s]
+        rem(filled[1],s)
+        map[🐍pos]={'🐍'} 
+    end
 end
 
 filled={}
