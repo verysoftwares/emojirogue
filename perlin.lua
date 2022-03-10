@@ -233,7 +233,7 @@ function 🐍_ai(pos)
     elseif 🐍.state=='located' then
         if #🐍.path>0 then
             local nextpos=🐍.path[1]
-            if not map[nextpos] or map[nextpos].path then
+            if not map[nextpos] or not solid(map[nextpos]) or (not map[pos].updated and map[nextpos].path) then
                 rem(🐍.path,1)
                 map[pos]=nil
                 map[nextpos]=🐍
