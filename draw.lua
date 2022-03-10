@@ -47,8 +47,8 @@ function draw()
               .15+.4, 
                      .2+.6,
                             1)
-    bg(.2+.55,
-              1,.2+.55,1)
+    bgcolor={.2+.55,1,.2+.55}
+    bg(bgcolor)
     --lg.printf('🌍ABD/?.-🌸24💮🏵45🌹🥀🌺🌻🌼🌷🌱🎂🛍🐉🎅🦠🕯🐰🎥🍂👨💪🎓🔥🎃🕎💕🕉👩🎊🏊👑☪🌱☘☀🏈🦃💘👰⛄🎿🏡⚽🌎🦦🦨🦘🦡🐾🦃🐔🐓🐣🐤🐥🐦🐧🕊🦅🦆🦢🦉🦩 Flamingo',16,16,sw)
     local cx,cy= 0,0
     for c=1,utf8.len(tstwrld) do
@@ -64,13 +64,13 @@ function draw()
     cx=cx+64; if c>1 and c%13==0 then cx=0; cy=cy+64+11 end
     end
 
-    if in_dungeon() then bg(0.4,0.2,0.2) end
+    if in_dungeon() then bgcolor={0.4,0.2,0.2}; bg(bgcolor) end
 
     fg(palettes[8])
     --for k,v in pairs(map) do
     for py=cam.y,cam.y+12-1 do
     for px=cam.x,cam.x+24-1 do
-        if not (px==😋.x and py==😋.y) and not (py==cam.y and px<cam.x+utf8.len(header.msg)) then
+        if not (px==😋.x and py==😋.y) then--and not (py==cam.y and px<cam.x+utf8.len(header.msg)) then
         local v=map[posstr(px,py)]
         if v and (not in_dungeon() or (in_dungeon() and (find(rays,posstr(px,py)) or find(memo,posstr(px,py))))) then
         if dex_pal[v[1]] then fg(dex_pal[v[1]])
@@ -114,7 +114,7 @@ function draw()
                 if i==cur_diag[cur_diag.i].choice.i then
                     rv=fmt('[%s]',v)
                 end
-                gridprint(rv,12-flr(len/2)+l,11)
+                gridprint(rv,12-flr(len/2)+l,11,true)
                 l=l+utf8.len(rv)+1
             end
         end
@@ -133,10 +133,10 @@ function draw()
         end
         end
         for i,v in ipairs(craft_area) do
-            gridprint(v[1],i,9)
+            gridprint(v[1],i,9,true)
         end
         for i,v in ipairs(inventory) do
-            gridprint(v[1],i,11)
+            gridprint(v[1],i,11,true)
             if i>=22 then break end
         end
         fg(0.2,0.2,0.6)
@@ -156,6 +156,10 @@ function gridprint(msg,mx,my,diag,setcolor)
         --fg(palettes[8])
         lg.setFont(hoverfon)
         local g=utf8.sub(msg,i,i)
+        if not diag then
+            fg(bgcolor)
+            rect('fill',16+mx,16+my,64,64+11)
+        end
         if dex_pal[g] then fg(dex_pal[g])
         else if not setcolor then fg(palettes[8]) end end
         if hoverfon:hasGlyphs(g) then
