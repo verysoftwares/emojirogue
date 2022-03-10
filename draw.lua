@@ -64,15 +64,18 @@ function draw()
     cx=cx+64; if c>1 and c%13==0 then cx=0; cy=cy+64+11 end
     end
 
+    if in_dungeon() then bg(0.4,0.2,0.2) end
+
     fg(palettes[8])
     --for k,v in pairs(map) do
     for py=cam.y,cam.y+12-1 do
     for px=cam.x,cam.x+24-1 do
         if not (px==😋.x and py==😋.y) and not (py==cam.y and px<cam.x+utf8.len(header.msg)) then
         local v=map[posstr(px,py)]
-        if v then
+        if v and (not in_dungeon() or (in_dungeon() and (find(rays,posstr(px,py)) or find(memo,posstr(px,py))))) then
         if dex_pal[v[1]] then fg(dex_pal[v[1]])
         else fg(palettes[8]) end
+        if in_dungeon() and find(memo,posstr(px,py)) and not find(rays,posstr(px,py)) then fg(0.3,0.3,0.3) end
         if emojifon:hasGlyphs(v[1]) then
         lg.setFont(emojifon)
         lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))

@@ -23,11 +23,13 @@ function update(hw_dt)
             local sx,sy=strpos(map[posstr(😋.x,😋.y)].entry)
             😋.x=sx; 😋.y=sy
         end
+        raycast()
     end
     if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔼' and tapped('<') then
         cam.y=cam.y+12
         local sx,sy=strpos(map[posstr(😋.x,😋.y)].entry)
         😋.x=sx; 😋.y=sy
+        raycast()
     end
 
     if moved then
@@ -37,6 +39,8 @@ function update(hw_dt)
         if 😋.x>=cam.x+24 then cam.x=cam.x+24 end
         if 😋.y<cam.y then cam.y=cam.y-12 end
         if 😋.x<cam.x then cam.x=cam.x-24 end
+
+        if in_dungeon() then raycast() end
 
         for y=0,12-1 do
         for x=0,24-1 do
@@ -167,5 +171,30 @@ end
 
 inventory={i=1,{'🌱'},{'🌱'},{'🌱'},{'🥀'},{'🌱'},{'🌱'}}
 craft_area={}
+
+function raycast()
+    rays={}
+    for i=0,530-1 do
+        local a=pi*2/530*i
+        local rx=😋.x*64+16+32
+        local ry=😋.y*(64+11)+16+32
+        while AABB(rx,ry,1,1,cam.x*64+16,cam.y*(64+11)+16,64*24,(64+11)*12) do
+            rx=rx+cos(a)*0.8
+            ry=ry+sin(a)*0.8
+            local tx,ty=flr((rx-16-32)/64),flr((ry-16-32)/(64+11))
+            if map[posstr(tx,ty)] then
+                --print(tx,ty,😋.x,😋.y,cam.x,cam.y)
+                if not find(rays,posstr(tx,ty)) then ins(rays,posstr(tx,ty)) end
+                if not find(memo,posstr(tx,ty)) then ins(memo,posstr(tx,ty)) end
+                if solid(posstr(tx,ty)) then break end
+            end
+        end
+    end
+end
+memo={}
+
+function in_dungeon()
+    return cam.y<0
+end
 
 love.update= update
