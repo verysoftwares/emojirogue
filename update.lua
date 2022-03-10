@@ -5,6 +5,21 @@ function update(hw_dt)
 
     if tapped('c') then love.update=talkselect; shout('Chat with whom?') end
 
+    if tapped('t') then 
+        throwtgt={}
+        if rays then
+        for i,v in ipairs(rays) do
+            if map[v] and is_entity(map[v][1]) then
+                ins(throwtgt,v)
+            end
+        end
+        end
+        if #throwtgt==0 then shout('No targets nearby.')
+        else love.update=throwselect; 
+        shout('Throw what and where?') 
+        end
+    end
+
     local moved=false
     if not moved and not solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then 😋.y=😋.y-1; moved=true end
     if not moved and not solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then 😋.y=😋.y+1; moved=true end
@@ -253,6 +268,26 @@ end
 
 function is_entity(e)
     return e=='🐴' or e=='🐍'
+end
+
+function throwselect()
+    if tapped('escape') then love.update=update end
+
+    if tapped('left')  then inventory.i=inventory.i-1 end
+    if tapped('right') then inventory.i=inventory.i+1 end
+    if inventory.i>#inventory then inventory.i=1 end
+    if inventory.i<1 then inventory.i=#inventory end
+
+    for i,v in ipairs(throwtgt) do
+        if tapped(tostring(i)) then
+            if inventory[inventory.i][1]=='🥛' then
+                --dmg(map[v])
+            end
+            rem(inventory,inventory.i)
+            love.update=update
+        end
+    end
+    t=t+1
 end
 
 love.update= update

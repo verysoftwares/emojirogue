@@ -93,6 +93,27 @@ function draw()
     fg(dex_pal['😋'])
     lg.print('😋',16+(😋.x-cam.x)*64,16+(😋.y-cam.y)*(64+11))
 
+    if love.update==throwselect then
+        for i,k in ipairs(throwtgt) do
+            if (t+i*8)%48<32 then
+            local kx,ky=strpos(k)
+            fg(bgcolor)
+            rect('fill',16+(kx-cam.x)*64,16+(ky-cam.y)*(64+11),64,64+11)
+            fg(0.8,0.8,0.8)
+            gridprint(tostring(i),kx-cam.x,ky-cam.y,false,true)
+            end
+        end
+        for dx=0,24-1 do
+            fg(0.8,0.8,0.8)
+            if dx==inventory.i then fg(0.4,0.8,0.4) end
+            rect('fill',16+dx*64,16+11*(64+11),64,64+11)
+        end
+        for i,v in ipairs(inventory) do
+            gridprint(v[1],i,11,false,true)
+            if i>=22 then break end
+        end        
+    end
+
     if love.update==dialogue then
         local r,g,b,a=lg.getColor()
         for dy=8,12-1 do
@@ -156,7 +177,7 @@ function gridprint(msg,mx,my,diag,setcolor)
         --fg(palettes[8])
         lg.setFont(hoverfon)
         local g=utf8.sub(msg,i,i)
-        if not diag then
+        if not diag and not setcolor then
             fg(bgcolor)
             rect('fill',16+mx,16+my,64,64+11)
         end
