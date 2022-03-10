@@ -72,10 +72,10 @@ function draw()
     for px=cam.x,cam.x+24-1 do
         if not (px==😋.x and py==😋.y) then--and not (py==cam.y and px<cam.x+utf8.len(header.msg)) then
         local v=map[posstr(px,py)]
-        if v and (not in_dungeon() or (in_dungeon() and (find(rays,posstr(px,py)) or find(memo,posstr(px,py))))) then
+        if v and (not in_dungeon() or (in_dungeon() and (find(rays,posstr(px,py)) or (find(memo,posstr(px,py) and not is_entity(v[1])))))) then
         if dex_pal[v[1]] then fg(dex_pal[v[1]])
         else fg(palettes[8]) end
-        if in_dungeon() and find(memo,posstr(px,py)) and not find(rays,posstr(px,py)) and not is_entity(v[1]) then fg(0.2,0.2,0.2) end
+        if in_dungeon() and find(memo,posstr(px,py)) and not find(rays,posstr(px,py)) then fg(0.2,0.2,0.2) end
         if emojifon:hasGlyphs(v[1]) then
         lg.setFont(emojifon)
         lg.print(v[1], 16+(px-cam.x)*64, 16+(py-cam.y)*(64+11))
