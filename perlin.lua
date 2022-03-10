@@ -187,6 +187,9 @@ function cavegen()
         if perlin(y*.35,x*.35,24724)<0.5 then
         map[posstr(x,y)]= {'⛰️'}
         end
+        if perlin(y*.35,x*.35,24724)>0.8 then
+        map[posstr(x,y)]= {'🌱'}
+        end
     end end
     filled={}
     for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
