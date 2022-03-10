@@ -251,4 +251,8 @@ function in_dungeon()
     return cam.y<0
 end
 
+function is_entity(e)
+    return e=='🐴' or e=='🐍'
+end
+
 love.update= update
