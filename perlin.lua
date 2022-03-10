@@ -145,6 +145,14 @@ function 😋collide(pos)
     return px==😋.x and py==😋.y
 end
 
+function 😋adjacent(pos)
+    local px,py=strpos(pos)
+    for i,v in ipairs({{-1,-1},{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0}}) do
+        if px+v[1]==😋.x and py+v[2]==😋.y then return true end
+    end
+    return false
+end
+
 function 🐴_wander(pos)
     local mx,my=strpos(pos)
     local newpos=posstr(mx+random(-1,1),my+random(-1,1))
@@ -211,28 +219,39 @@ end
 
 function 🐍_ai(pos)
     local 🐍=map[pos]
+    print(fmt('snek @ %s',pos))
     if 🐍.state==nil then
     local mx,my=strpos(pos)
     local newpos=posstr(mx+random(-1,1),my+random(-1,1))
     if not map[newpos] and not 😋collide(newpos) and not oob(newpos) then
     map[pos]=nil
     map[newpos]=🐍
+    enemy_raycast(newpos)
+    else
     enemy_raycast(pos)
     end
     elseif 🐍.state=='located' then
         if #🐍.path>0 then
-        local nextpos=🐍.path[1]
-        if not map[nextpos] then
-        rem(🐍.path[1])
-        map[pos]=nil
-        map[nextpos]=🐍
-        end
+            local nextpos=🐍.path[1]
+            if not map[nextpos] or map[nextpos].path then
+                rem(🐍.path,1)
+                map[pos]=nil
+                map[nextpos]=🐍
+                print(fmt('snek @ %s walks into %s',pos,nextpos))
+                if 😋adjacent(nextpos) then
+                    local dmg=random(2)
+                    shout(fmt('The 🐍 bites you for %d damage!',dmg))
+                    😋.hp=😋.hp-dmg
+                    enemy_raycast(nextpos)
+                end
+            end
         else
+            print(fmt('snek @ %s is bored.',pos))
             🐍.state=nil
+            🐍.path=nil
             🐍_ai(pos)
             return
         end
-        enemy_raycast(pos)
     end
 end
 

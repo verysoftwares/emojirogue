@@ -1,4 +1,4 @@
-😋 = {x=6,y=3}
+😋 = {x=6,y=3,hp=9}
 
 function update(hw_dt)
     if tapped('r') then love.event.quit('restart') end
@@ -40,8 +40,6 @@ function update(hw_dt)
         if 😋.y<cam.y then cam.y=cam.y-12 end
         if 😋.x<cam.x then cam.x=cam.x-24 end
 
-        if in_dungeon() then raycast() end
-
         for y=0,12-1 do
         for x=0,24-1 do
             local pos=posstr(cam.x+x,cam.y+y)
@@ -53,7 +51,9 @@ function update(hw_dt)
             local pos=posstr(cam.x+x,cam.y+y)
             if map[pos] and map[pos].f and not map[pos].updated then map[pos].updated=true; map[pos].f(pos) end 
         end
-        end        
+        end
+
+        if in_dungeon() then raycast() end        
     end
 
     t=t+1
@@ -205,6 +205,7 @@ function enemy_raycast(pos)
             ry=ry+sin(a)*0.8
             local tx,ty=flr((rx-16-32)/64),flr((ry-16-32)/(64+11))
             if tx==😋.x and ty==😋.y then
+                print(fmt('snek spotted player @ %d:%d!',tx,ty))
                 enemy_pathfind(pos,{x=😋.x,y=😋.y})
                 return
             end
@@ -218,30 +219,30 @@ function enemy_raycast(pos)
 end
 
 function enemy_pathfind(pos,tgt)
-    local cx,cy=strpos(pos)
-    local out={{posstr(cx,cy)}}
+    local out={{pos}}
     for i,v in ipairs(out) do
         local px,py=strpos(v[1])
         if px==tgt.x and py==tgt.y then
             map[pos].path={}
             map[pos].state='located'
+            print(fmt('snek @ %s in state located',pos))
             local pathtile=v
             while pathtile do
+                print(pathtile[1])
                 ins(map[pos].path,1,pathtile[1])
                 pathtile=pathtile.prev
             end
             rem(map[pos].path,1) -- because it is just the starting tile
             return
         end
-        if px-1>=cam.x and not map[posstr(px-1,py)] and not find(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}) end
-        if px-1>=cam.x and py-1>=cam.y and not map[posstr(px-1,py-1)] and not find(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}) end
-        if py-1>=cam.y and not map[posstr(px,py-1)] and not find(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}) end
-        if px+1<cam.x+24 and py-1>=cam.y and not map[posstr(px+1,py-1)] and not find(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}) end
-        if px+1<cam.x+24 and not map[posstr(px+1,py)] and not find(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}) end
-        if px+1<cam.x+24 and py+1<cam.y+12 and not map[posstr(px+1,py+1)] and not find(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}) end
-        if py+1<cam.y+12 and not map[posstr(px,py+1)] and not find(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}) end
-        if px-1>=cam.x and py+1<cam.y+12 and not map[posstr(px-1,py+1)] and not find(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}) end
-        out[#out].prev=v
+        if px-1>=cam.x and not map[posstr(px-1,py)] and not findany(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}); out[#out].prev=v end
+        if px-1>=cam.x and py-1>=cam.y and not map[posstr(px-1,py-1)] and not findany(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}); out[#out].prev=v end
+        if py-1>=cam.y and not map[posstr(px,py-1)] and not findany(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py-1>=cam.y and not map[posstr(px+1,py-1)] and not findany(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and not map[posstr(px+1,py)] and not findany(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py+1<cam.y+12 and not map[posstr(px+1,py+1)] and not findany(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}); out[#out].prev=v end
+        if py+1<cam.y+12 and not map[posstr(px,py+1)] and not findany(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}); out[#out].prev=v end
+        if px-1>=cam.x and py+1<cam.y+12 and not map[posstr(px-1,py+1)] and not findany(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}); out[#out].prev=v end
     end
 
 end
