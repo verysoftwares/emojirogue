@@ -3,7 +3,7 @@
 function update(hw_dt)
     if tapped('r') then love.event.quit('restart') end
 
-    if tapped('t') then love.update=talkselect; shout('Talk to whom?') end
+    if tapped('c') then love.update=talkselect; shout('Chat with whom?') end
 
     local moved=false
     if not moved and not solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then 😋.y=😋.y-1; moved=true end
@@ -66,7 +66,7 @@ function talkselect()
         if map[pos] then
             if map[pos].t then
                 map[pos].t(map[pos]); header.msg='Hello world!'
-            else shout(fmt('You can\'t talk to a %s!',map[pos][1])); love.update=update end
+            else shout(fmt('You can\'t chat with a %s!',map[pos][1])); love.update=update end
         else shout('Nobody there to talk to.'); love.update=update end
     end
     end
