@@ -87,12 +87,12 @@ function draw()
         end
     end
     end
-    lg.setFont(hoverfon)
-    gridprint(header.msg)
     lg.setFont(emojifon)
     fg(dex_pal['😋'])
     lg.print('😋',16+(😋.x-cam.x)*64,16+(😋.y-cam.y)*(64+11))
-
+    lg.setFont(hoverfon)
+    gridprint(header.msg)
+    
     if love.update==throwselect then
         for i,k in ipairs(throwtgt) do
             if (t+i*8)%48<32 then
