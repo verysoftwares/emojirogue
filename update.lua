@@ -48,7 +48,7 @@ function update(hw_dt)
     end
 
     if moved then
-        header.msg='Hello world!'
+        header.msg=''
 
         if 😋.y>=cam.y+12 then cam.y=cam.y+12 end
         if 😋.x>=cam.x+24 then cam.x=cam.x+24 end
@@ -80,7 +80,7 @@ function talkselect()
         local pos=posstr(😋.x+v[2],😋.y+v[3])
         if map[pos] then
             if map[pos].t then
-                map[pos].t(map[pos]); header.msg='Hello world!'
+                map[pos].t(map[pos]); header.msg=''
             else shout(fmt('You can\'t chat with a %s!',map[pos][1])); love.update=update end
         else shout('Nobody there to talk to.'); love.update=update end
     end
