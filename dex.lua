@@ -49,4 +49,5 @@ dex_recipes={
 
 dex_nmy={
     ['🐍']={maxhp=3},
+    ['🕷']={maxhp=5},
 }

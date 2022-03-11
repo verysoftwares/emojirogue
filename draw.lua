@@ -89,7 +89,8 @@ function draw()
     end
     lg.setFont(emojifon)
     fg(dex_pal['😋'])
-    lg.print('😋',16+(😋.x-cam.x)*64,16+(😋.y-cam.y)*(64+11))
+    if 😋[1]=='🕸️' then fg(0.8,0.8,0.8) end
+    lg.print(😋[1],16+(😋.x-cam.x)*64,16+(😋.y-cam.y)*(64+11))
     lg.setFont(hoverfon)
     gridprint(header.msg)
     

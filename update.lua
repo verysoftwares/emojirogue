@@ -1,4 +1,4 @@
-😋 = {x=6,y=3,hp=9}
+😋 = {'😋',x=6,y=3,hp=9}
 
 function update(hw_dt)
     if tapped('r') then love.event.quit('restart') end
@@ -47,7 +47,7 @@ function update(hw_dt)
         raycast()
     end
 
-    if moved then
+    if moved and not 😋.webbed then
         header.msg=''
 
         if 😋.y>=cam.y+12 then cam.y=cam.y+12 end
@@ -55,20 +55,16 @@ function update(hw_dt)
         if 😋.y<cam.y then cam.y=cam.y-12 end
         if 😋.x<cam.x then cam.x=cam.x-24 end
 
-        for y=0,12-1 do
-        for x=0,24-1 do
-            local pos=posstr(cam.x+x,cam.y+y)
-            if map[pos] and map[pos].f then map[pos].updated=false end 
-        end
-        end
-        for y=0,12-1 do
-        for x=0,24-1 do
-            local pos=posstr(cam.x+x,cam.y+y)
-            if map[pos] and map[pos].f and not map[pos].updated then map[pos].updated=true; map[pos].f(pos) end 
-        end
-        end
+        entity_update()
 
         if in_dungeon() then raycast() end        
+    elseif 😋.webbed then
+        if 😋.webbed<=0 then shout('You\'re no longer webbed.'); 😋[1]='😋'; 😋.webbed=nil
+        else shout('You\'re still webbed!') end
+        if 😋.webbed then 😋.webbed=😋.webbed-random(2) end
+        
+        entity_update()
+        if in_dungeon() then raycast() end
     end
 
     t=t+1
@@ -211,7 +207,7 @@ memo={}
 function enemy_raycast(pos)
     print(fmt('snek @ %s sees surroundings',pos))
     local ex,ey=strpos(pos)
-    --enemy_rays={}
+    enemy_rays={}
     for i=0,530-1 do
         local a=pi*2/530*i
         local rx=ex*64+16+32
@@ -227,7 +223,7 @@ function enemy_raycast(pos)
             end
             if map[posstr(tx,ty)] and not (posstr(tx,ty)==pos) then
                 --print(tx,ty,😋.x,😋.y,cam.x,cam.y)
-                --if not find(enemy_rays,posstr(tx,ty)) then ins(enemy_rays,posstr(tx,ty)) end
+                if not find(enemy_rays,posstr(tx,ty)) then ins(enemy_rays,posstr(tx,ty)) end
                 if not is_seethru(posstr(tx,ty)) then break end
             end
         end
@@ -263,6 +259,21 @@ function enemy_pathfind(pos,tgt)
     end
     print(fmt('..but the player was not found among %d positions?!',#out))
     print(fmt('%d:%d',tx,ty),findany(out,tgt))
+end
+
+function entity_update()
+    for y=0,12-1 do
+    for x=0,24-1 do
+        local pos=posstr(cam.x+x,cam.y+y)
+        if map[pos] and map[pos].f then map[pos].updated=false end 
+    end
+    end
+    for y=0,12-1 do
+    for x=0,24-1 do
+        local pos=posstr(cam.x+x,cam.y+y)
+        if map[pos] and map[pos].f and not map[pos].updated then map[pos].updated=true; map[pos].f(pos) end 
+    end
+    end
 end
 
 function in_dungeon()

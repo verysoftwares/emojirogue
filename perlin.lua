@@ -132,7 +132,7 @@ for i=0,24-1 do
 end
 
 function is_solid(pos)
-    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️' or map[pos][1]=='🐍')
+    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️' or map[pos][1]=='🐍' or map[pos][1]=='🕷')
 end
 
 function is_seethru(pos)
@@ -222,6 +222,16 @@ function cavegen()
         rem(filled[1],s)
         map[🐍pos]={'🐍',f=🐍_ai,hp=dex_nmy['🐍'].maxhp}
     end
+    if dungeonlevel>=2 then
+        s=random(#filled[1])
+        local 🕷pos=filled[1][s]
+        rem(filled[1],s)
+        map[🕷pos]={'🕷',f=🕷_ai,hp=dex_nmy['🕷'].maxhp}
+    end
+end
+
+function dungeonlevel()
+    return -cam.y/12
 end
 
 function playerbite(pos,min,max)
@@ -229,17 +239,20 @@ function playerbite(pos,min,max)
         local dmg=random(min,max)
         shout(fmt('The %s bites you for %d damage!',map[pos][1],dmg))
         😋.hp=😋.hp-dmg
+        return true
     end
+    return false
 end
 
-function generic_ai_f(playertarget)
+function generic_ai_f(id,playertarget,postupdate)
     return function(pos)
         local 🆔=map[pos]
+        local newpos=nil
         print(fmt('nmy @ %s',pos))
         ::start::
         if 🆔.state==nil then
             local mx,my=strpos(pos)
-            local newpos=posstr(mx+random(-1,1),my+random(-1,1))
+            newpos=posstr(mx+random(-1,1),my+random(-1,1))
             if not is_solid(newpos) and not 😋collide(newpos) and not oob(newpos) then
                 map[pos]=nil
                 map[newpos]=🆔
@@ -249,14 +262,17 @@ function generic_ai_f(playertarget)
             end
         elseif 🆔.state=='located' then
             if #🆔.path>0 then
-                local nextpos=🆔.path[1]
-                if not is_solid(nextpos) and not 😋collide(nextpos) then
+                newpos=🆔.path[1]
+                if not is_solid(newpos) and not 😋collide(newpos) then
                     rem(🆔.path,1)
                     map[pos]=nil
-                    map[nextpos]=🆔
-                    print(fmt('nmy @ %s walks into %s',pos,nextpos))
-                    playertarget(nextpos)
-                    enemy_raycast(nextpos)
+                    if map[newpos]~=nil then
+                        shout(fmt('The %s stomped a %s!',id,map[newpos][1]))
+                    end
+                    map[newpos]=🆔
+                    print(fmt('nmy @ %s walks into %s',pos,newpos))
+                    playertarget(newpos)
+                    enemy_raycast(newpos)
                 else
                     enemy_raycast(pos)
                 end
@@ -268,11 +284,29 @@ function generic_ai_f(playertarget)
             end
         end
 
+        if postupdate then postupdate(newpos or pos)
     end
 end
 
-🐍_ai=generic_ai_f(function (pos)
+🐍_ai=generic_ai_f('🐍',function (pos)
     playerbite(pos,1,2)
+end)
+
+🕷_ai=generic_ai_f('🕷',function (pos)
+    if not playerbite(pos,2,3) then
+        local 🕷=map[pos]
+        if 🕷.cooldown==nil then
+            if find(enemy_rays,posstr(😋.x,😋.y)) then
+                😋.webbed=2
+                😋[1]='🕸️'
+                shout('The 🕷 shoots web at you!')
+                🕷.cooldown=3
+            end
+        end
+    end
+end,function(pos) 
+    if 🕷.cooldown>0 then 🕷.cooldown=🕷.cooldown-1
+    else 🕷.cooldown=nil end
 end)
 
 filled={}
