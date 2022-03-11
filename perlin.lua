@@ -224,45 +224,56 @@ function cavegen()
     end
 end
 
-function 🐍_ai(pos)
-    local 🐍=map[pos]
-    print(fmt('snek @ %s',pos))
-    if 🐍.state==nil then
-    local mx,my=strpos(pos)
-    local newpos=posstr(mx+random(-1,1),my+random(-1,1))
-    if not is_solid(newpos) and not 😋collide(newpos) and not oob(newpos) then
-    map[pos]=nil
-    map[newpos]=🐍
-    enemy_raycast(newpos)
-    else
-    enemy_raycast(pos)
+function playerbite(pos,min,max)
+    if 😋adjacent(pos) then
+        local dmg=random(min,max)
+        shout(fmt('The %s bites you for %d damage!',map[pos][1],dmg))
+        😋.hp=😋.hp-dmg
     end
-    elseif 🐍.state=='located' then
-        if #🐍.path>0 then
-            local nextpos=🐍.path[1]
-            if not is_solid(nextpos) and not 😋collide(nextpos) then
-                rem(🐍.path,1)
+end
+
+function generic_ai_f(playertarget)
+    return function(pos)
+        local 🆔=map[pos]
+        print(fmt('nmy @ %s',pos))
+        ::start::
+        if 🆔.state==nil then
+            local mx,my=strpos(pos)
+            local newpos=posstr(mx+random(-1,1),my+random(-1,1))
+            if not is_solid(newpos) and not 😋collide(newpos) and not oob(newpos) then
                 map[pos]=nil
-                map[nextpos]=🐍
-                print(fmt('snek @ %s walks into %s',pos,nextpos))
-                if 😋adjacent(nextpos) then
-                    local dmg=random(2)
-                    shout(fmt('The 🐍 bites you for %d damage!',dmg))
-                    😋.hp=😋.hp-dmg
-                end
-                enemy_raycast(nextpos)
+                map[newpos]=🆔
+                enemy_raycast(newpos)
             else
                 enemy_raycast(pos)
             end
-        else
-            print(fmt('snek @ %s is bored.',pos))
-            🐍.state=nil
-            🐍.path=nil
-            🐍_ai(pos)
-            return
+        elseif 🆔.state=='located' then
+            if #🆔.path>0 then
+                local nextpos=🆔.path[1]
+                if not is_solid(nextpos) and not 😋collide(nextpos) then
+                    rem(🆔.path,1)
+                    map[pos]=nil
+                    map[nextpos]=🆔
+                    print(fmt('nmy @ %s walks into %s',pos,nextpos))
+                    playertarget(nextpos)
+                    enemy_raycast(nextpos)
+                else
+                    enemy_raycast(pos)
+                end
+            else
+                print(fmt('nmy @ %s is bored.',pos))
+                🆔.state=nil
+                🆔.path=nil
+                goto start
+            end
         end
+
     end
 end
+
+🐍_ai=generic_ai_f(function (pos)
+    playerbite(pos,1,2)
+end)
 
 filled={}
 function floodfill(cx,cy)
