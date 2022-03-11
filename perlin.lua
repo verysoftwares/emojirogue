@@ -131,11 +131,11 @@ for i=0,24-1 do
     if i==11 then map[posstr(i+24,2)]={'🔽'} end
 end
 
-function solid(pos)
+function is_solid(pos)
     return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️' or map[pos][1]=='🐍')
 end
 
-function seethru(pos)
+function is_seethru(pos)
     return not map[pos] or (map[pos][1]~='🧱' and map[pos][1]~='⛰️')
 end
 
@@ -230,7 +230,7 @@ function 🐍_ai(pos)
     if 🐍.state==nil then
     local mx,my=strpos(pos)
     local newpos=posstr(mx+random(-1,1),my+random(-1,1))
-    if not solid(newpos) and not 😋collide(newpos) and not oob(newpos) then
+    if not is_solid(newpos) and not 😋collide(newpos) and not oob(newpos) then
     map[pos]=nil
     map[newpos]=🐍
     enemy_raycast(newpos)
@@ -240,7 +240,7 @@ function 🐍_ai(pos)
     elseif 🐍.state=='located' then
         if #🐍.path>0 then
             local nextpos=🐍.path[1]
-            if not solid(nextpos) then
+            if not is_solid(nextpos) then
                 rem(🐍.path,1)
                 map[pos]=nil
                 map[nextpos]=🐍

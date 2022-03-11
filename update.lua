@@ -21,14 +21,14 @@ function update(hw_dt)
     end
 
     local moved=false
-    if not moved and not solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then 😋.y=😋.y-1; moved=true end
-    if not moved and not solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then 😋.y=😋.y+1; moved=true end
-    if not moved and not solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4') or tapped('h'))  then 😋.x=😋.x-1; moved=true end
-    if not moved and not solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6') or tapped('k')) then 😋.x=😋.x+1; moved=true end
-    if not moved and not solid(posstr(😋.x-1,😋.y-1)) and (tapped('kp7') or tapped('y')) then 😋.x=😋.x-1; 😋.y=😋.y-1; moved=true end
-    if not moved and not solid(posstr(😋.x-1,😋.y+1)) and (tapped('kp1') or tapped('b')) then 😋.x=😋.x-1; 😋.y=😋.y+1; moved=true end
-    if not moved and not solid(posstr(😋.x+1,😋.y-1)) and (tapped('kp9') or tapped('i')) then 😋.x=😋.x+1; 😋.y=😋.y-1; moved=true end
-    if not moved and not solid(posstr(😋.x+1,😋.y+1)) and (tapped('kp3') or tapped('m')) then 😋.x=😋.x+1; 😋.y=😋.y+1; moved=true end
+    if not moved and not is_solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then 😋.y=😋.y-1; moved=true end
+    if not moved and not is_solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then 😋.y=😋.y+1; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4') or tapped('h'))  then 😋.x=😋.x-1; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6') or tapped('k')) then 😋.x=😋.x+1; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y-1)) and (tapped('kp7') or tapped('y')) then 😋.x=😋.x-1; 😋.y=😋.y-1; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y+1)) and (tapped('kp1') or tapped('b')) then 😋.x=😋.x-1; 😋.y=😋.y+1; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y-1)) and (tapped('kp9') or tapped('i')) then 😋.x=😋.x+1; 😋.y=😋.y-1; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y+1)) and (tapped('kp3') or tapped('m')) then 😋.x=😋.x+1; 😋.y=😋.y+1; moved=true end
 
     if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔽' and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) and tapped('<') then
         cam.y=cam.y-12
@@ -201,7 +201,7 @@ function raycast()
                 --print(tx,ty,😋.x,😋.y,cam.x,cam.y)
                 if not find(rays,posstr(tx,ty)) then ins(rays,posstr(tx,ty)) end
                 if not find(memo,posstr(tx,ty)) then ins(memo,posstr(tx,ty)) end
-                if not seethru(posstr(tx,ty)) then break end
+                if not is_seethru(posstr(tx,ty)) then break end
             end
         end
     end
@@ -228,7 +228,7 @@ function enemy_raycast(pos)
             if map[posstr(tx,ty)] and not (posstr(tx,ty)==pos) then
                 --print(tx,ty,😋.x,😋.y,cam.x,cam.y)
                 --if not find(enemy_rays,posstr(tx,ty)) then ins(enemy_rays,posstr(tx,ty)) end
-                if not seethru(posstr(tx,ty)) then break end
+                if not is_seethru(posstr(tx,ty)) then break end
             end
         end
     end
@@ -252,14 +252,14 @@ function enemy_pathfind(pos,tgt)
             rem(map[pos].path,1) -- because it is just the starting tile
             return
         end
-        if px-1>=cam.x and not (solid(posstr(px-1,py)) and not is_entity(map[posstr(px-1,py)][1])) and not findany(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}); out[#out].prev=v end
-        if px-1>=cam.x and py-1>=cam.y and not (solid(posstr(px-1,py-1)) and not is_entity(map[posstr(px-1,py-1)][1])) and not findany(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}); out[#out].prev=v end
-        if py-1>=cam.y and not (solid(posstr(px,py-1)) and not is_entity(map[posstr(px,py-1)][1])) and not findany(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}); out[#out].prev=v end
-        if px+1<cam.x+24 and py-1>=cam.y and not (solid(posstr(px+1,py-1)) and not is_entity(map[posstr(px+1,py-1)][1])) and not findany(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}); out[#out].prev=v end
-        if px+1<cam.x+24 and not (solid(posstr(px+1,py)) and not is_entity(map[posstr(px+1,py)][1])) and not findany(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}); out[#out].prev=v end
-        if px+1<cam.x+24 and py+1<cam.y+12 and not (solid(posstr(px+1,py+1)) and not is_entity(map[posstr(px+1,py+1)][1])) and not findany(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}); out[#out].prev=v end
-        if py+1<cam.y+12 and not (solid(posstr(px,py+1)) and not is_entity(map[posstr(px,py+1)][1])) and not findany(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}); out[#out].prev=v end
-        if px-1>=cam.x and py+1<cam.y+12 and not (solid(posstr(px-1,py+1)) and not is_entity(map[posstr(px-1,py+1)][1])) and not findany(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}); out[#out].prev=v end
+        if px-1>=cam.x and not (is_solid(posstr(px-1,py)) and not is_entity(map[posstr(px-1,py)][1])) and not findany(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}); out[#out].prev=v end
+        if px-1>=cam.x and py-1>=cam.y and not (is_solid(posstr(px-1,py-1)) and not is_entity(map[posstr(px-1,py-1)][1])) and not findany(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}); out[#out].prev=v end
+        if py-1>=cam.y and not (is_solid(posstr(px,py-1)) and not is_entity(map[posstr(px,py-1)][1])) and not findany(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py-1>=cam.y and not (is_solid(posstr(px+1,py-1)) and not is_entity(map[posstr(px+1,py-1)][1])) and not findany(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and not (is_solid(posstr(px+1,py)) and not is_entity(map[posstr(px+1,py)][1])) and not findany(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py+1<cam.y+12 and not (is_solid(posstr(px+1,py+1)) and not is_entity(map[posstr(px+1,py+1)][1])) and not findany(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}); out[#out].prev=v end
+        if py+1<cam.y+12 and not (is_solid(posstr(px,py+1)) and not is_entity(map[posstr(px,py+1)][1])) and not findany(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}); out[#out].prev=v end
+        if px-1>=cam.x and py+1<cam.y+12 and not (is_solid(posstr(px-1,py+1)) and not is_entity(map[posstr(px-1,py+1)][1])) and not findany(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}); out[#out].prev=v end
     end
     print(fmt('..but the player was not found among %d positions?!',#out))
     print(fmt('%d:%d',tx,ty),findany(out,tgt))
