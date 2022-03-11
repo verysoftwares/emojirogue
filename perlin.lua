@@ -132,7 +132,11 @@ for i=0,24-1 do
 end
 
 function solid(pos)
-    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️')
+    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️' or map[pos][1]=='🐍')
+end
+
+function seethru(pos)
+    return not map[pos] or (map[pos][1]~='🧱' and map[pos][1]~='⛰️')
 end
 
 function oob(pos)
@@ -187,7 +191,7 @@ function cavegen()
         if perlin(y*.35,x*.35,24724)<0.5 then
         map[posstr(x,y)]= {'⛰️'}
         end
-        if perlin(y*.35,x*.35,24724)>0.8 then
+        if perlin(y*.35,x*.35,24724)>0.7 then
         map[posstr(x,y)]= {'🌱'}
         end
     end end
@@ -226,7 +230,7 @@ function 🐍_ai(pos)
     if 🐍.state==nil then
     local mx,my=strpos(pos)
     local newpos=posstr(mx+random(-1,1),my+random(-1,1))
-    if not map[newpos] and not 😋collide(newpos) and not oob(newpos) then
+    if not solid(newpos) and not 😋collide(newpos) and not oob(newpos) then
     map[pos]=nil
     map[newpos]=🐍
     enemy_raycast(newpos)
@@ -236,7 +240,7 @@ function 🐍_ai(pos)
     elseif 🐍.state=='located' then
         if #🐍.path>0 then
             local nextpos=🐍.path[1]
-            if not map[nextpos] or not solid(map[nextpos]) then
+            if not solid(nextpos) then
                 rem(🐍.path,1)
                 map[pos]=nil
                 map[nextpos]=🐍
@@ -245,8 +249,10 @@ function 🐍_ai(pos)
                     local dmg=random(2)
                     shout(fmt('The 🐍 bites you for %d damage!',dmg))
                     😋.hp=😋.hp-dmg
-                    enemy_raycast(nextpos)
                 end
+                enemy_raycast(nextpos)
+            else
+                enemy_raycast(pos)
             end
         else
             print(fmt('snek @ %s is bored.',pos))

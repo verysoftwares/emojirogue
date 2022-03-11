@@ -201,7 +201,7 @@ function raycast()
                 --print(tx,ty,😋.x,😋.y,cam.x,cam.y)
                 if not find(rays,posstr(tx,ty)) then ins(rays,posstr(tx,ty)) end
                 if not find(memo,posstr(tx,ty)) then ins(memo,posstr(tx,ty)) end
-                if solid(posstr(tx,ty)) then break end
+                if not seethru(posstr(tx,ty)) then break end
             end
         end
     end
@@ -209,6 +209,7 @@ end
 memo={}
 
 function enemy_raycast(pos)
+    print(fmt('snek @ %s sees surroundings',pos))
     local ex,ey=strpos(pos)
     --enemy_rays={}
     for i=0,530-1 do
@@ -219,15 +220,15 @@ function enemy_raycast(pos)
             rx=rx+cos(a)*0.8
             ry=ry+sin(a)*0.8
             local tx,ty=flr((rx-16-32)/64),flr((ry-16-32)/(64+11))
-            if tx==😋.x and ty==😋.y then
+            if posstr(tx,ty)==posstr(😋.x,😋.y) then
                 print(fmt('snek spotted player @ %d:%d!',tx,ty))
-                enemy_pathfind(pos,{x=😋.x,y=😋.y})
+                enemy_pathfind(pos,posstr(😋.x,😋.y))
                 return
             end
-            if map[posstr(tx,ty)] then
+            if map[posstr(tx,ty)] and not (posstr(tx,ty)==pos) then
                 --print(tx,ty,😋.x,😋.y,cam.x,cam.y)
                 --if not find(enemy_rays,posstr(tx,ty)) then ins(enemy_rays,posstr(tx,ty)) end
-                if solid(posstr(tx,ty)) then break end
+                if not seethru(posstr(tx,ty)) then break end
             end
         end
     end
@@ -235,9 +236,10 @@ end
 
 function enemy_pathfind(pos,tgt)
     local out={{pos}}
+    local tx,ty=strpos(tgt)
     for i,v in ipairs(out) do
         local px,py=strpos(v[1])
-        if px==tgt.x and py==tgt.y then
+        if px==tx and py==ty then
             map[pos].path={}
             map[pos].state='located'
             print(fmt('snek @ %s in state located',pos))
@@ -250,16 +252,17 @@ function enemy_pathfind(pos,tgt)
             rem(map[pos].path,1) -- because it is just the starting tile
             return
         end
-        if px-1>=cam.x and not map[posstr(px-1,py)] and not findany(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}); out[#out].prev=v end
-        if px-1>=cam.x and py-1>=cam.y and not map[posstr(px-1,py-1)] and not findany(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}); out[#out].prev=v end
-        if py-1>=cam.y and not map[posstr(px,py-1)] and not findany(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}); out[#out].prev=v end
-        if px+1<cam.x+24 and py-1>=cam.y and not map[posstr(px+1,py-1)] and not findany(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}); out[#out].prev=v end
-        if px+1<cam.x+24 and not map[posstr(px+1,py)] and not findany(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}); out[#out].prev=v end
-        if px+1<cam.x+24 and py+1<cam.y+12 and not map[posstr(px+1,py+1)] and not findany(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}); out[#out].prev=v end
-        if py+1<cam.y+12 and not map[posstr(px,py+1)] and not findany(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}); out[#out].prev=v end
-        if px-1>=cam.x and py+1<cam.y+12 and not map[posstr(px-1,py+1)] and not findany(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}); out[#out].prev=v end
+        if px-1>=cam.x and not solid(posstr(px-1,py)) and not findany(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}); out[#out].prev=v end
+        if px-1>=cam.x and py-1>=cam.y and not solid(posstr(px-1,py-1)) and not findany(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}); out[#out].prev=v end
+        if py-1>=cam.y and not solid(posstr(px,py-1)) and not findany(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py-1>=cam.y and not solid(posstr(px+1,py-1)) and not findany(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and not solid(posstr(px+1,py)) and not findany(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py+1<cam.y+12 and not solid(posstr(px+1,py+1)) and not findany(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}); out[#out].prev=v end
+        if py+1<cam.y+12 and not solid(posstr(px,py+1)) and not findany(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}); out[#out].prev=v end
+        if px-1>=cam.x and py+1<cam.y+12 and not solid(posstr(px-1,py+1)) and not findany(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}); out[#out].prev=v end
     end
-
+    print(fmt('..but the player was not found among %d positions?!',#out))
+    print(fmt('%d:%d',tx,ty),findany(out,tgt))
 end
 
 function in_dungeon()
