@@ -240,7 +240,7 @@ function 🐍_ai(pos)
     elseif 🐍.state=='located' then
         if #🐍.path>0 then
             local nextpos=🐍.path[1]
-            if not is_solid(nextpos) then
+            if not is_solid(nextpos) and not 😋collide(nextpos) then
                 rem(🐍.path,1)
                 map[pos]=nil
                 map[nextpos]=🐍
