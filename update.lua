@@ -252,14 +252,14 @@ function enemy_pathfind(pos,tgt)
             rem(map[pos].path,1) -- because it is just the starting tile
             return
         end
-        if px-1>=cam.x and not solid(posstr(px-1,py)) and not findany(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}); out[#out].prev=v end
-        if px-1>=cam.x and py-1>=cam.y and not solid(posstr(px-1,py-1)) and not findany(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}); out[#out].prev=v end
-        if py-1>=cam.y and not solid(posstr(px,py-1)) and not findany(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}); out[#out].prev=v end
-        if px+1<cam.x+24 and py-1>=cam.y and not solid(posstr(px+1,py-1)) and not findany(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}); out[#out].prev=v end
-        if px+1<cam.x+24 and not solid(posstr(px+1,py)) and not findany(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}); out[#out].prev=v end
-        if px+1<cam.x+24 and py+1<cam.y+12 and not solid(posstr(px+1,py+1)) and not findany(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}); out[#out].prev=v end
-        if py+1<cam.y+12 and not solid(posstr(px,py+1)) and not findany(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}); out[#out].prev=v end
-        if px-1>=cam.x and py+1<cam.y+12 and not solid(posstr(px-1,py+1)) and not findany(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}); out[#out].prev=v end
+        if px-1>=cam.x and not (solid(posstr(px-1,py)) and not is_entity(map[posstr(px-1,py)])) and not findany(out,posstr(px-1,py)) then ins(out,{posstr(px-1,py)}); out[#out].prev=v end
+        if px-1>=cam.x and py-1>=cam.y and not (solid(posstr(px-1,py-1)) and not is_entity(map[posstr(px-1,py-1)])) and not findany(out,posstr(px-1,py-1)) then ins(out,{posstr(px-1,py-1)}); out[#out].prev=v end
+        if py-1>=cam.y and not (solid(posstr(px,py-1)) and not is_entity(map[posstr(px,py-1)])) and not findany(out,posstr(px,py-1)) then ins(out,{posstr(px,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py-1>=cam.y and not (solid(posstr(px+1,py-1)) and not is_entity(map[posstr(px+1,py-1)])) and not findany(out,posstr(px+1,py-1)) then ins(out,{posstr(px+1,py-1)}); out[#out].prev=v end
+        if px+1<cam.x+24 and not (solid(posstr(px+1,py)) and not is_entity(map[posstr(px+1,py)])) and not findany(out,posstr(px+1,py)) then ins(out,{posstr(px+1,py)}); out[#out].prev=v end
+        if px+1<cam.x+24 and py+1<cam.y+12 and not (solid(posstr(px+1,py+1)) and not is_entity(map[posstr(px+1,py+1)])) and not findany(out,posstr(px+1,py+1)) then ins(out,{posstr(px+1,py+1)}); out[#out].prev=v end
+        if py+1<cam.y+12 and not (solid(posstr(px,py+1)) and not is_entity(map[posstr(px,py+1)])) and not findany(out,posstr(px,py+1)) then ins(out,{posstr(px,py+1)}); out[#out].prev=v end
+        if px-1>=cam.x and py+1<cam.y+12 and not (solid(posstr(px-1,py+1)) and not is_entity(map[posstr(px-1,py+1)])) and not findany(out,posstr(px-1,py+1)) then ins(out,{posstr(px-1,py+1)}); out[#out].prev=v end
     end
     print(fmt('..but the player was not found among %d positions?!',#out))
     print(fmt('%d:%d',tx,ty),findany(out,tgt))
