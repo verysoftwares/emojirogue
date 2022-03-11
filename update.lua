@@ -130,7 +130,9 @@ diag_db={
 
 header={msg='Hello world!'}
 function shout(msg)
-    header.msg=msg
+    if t==header.t then header.msg=fmt('%s %s',header.msg,msg)
+    else header.msg=msg end
+    header.t=t
 end
 
 function craft()
