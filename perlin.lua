@@ -139,6 +139,10 @@ function is_seethru(pos)
     return not map[pos] or (map[pos][1]~='🧱' and map[pos][1]~='⛰️')
 end
 
+function is_entity(e)
+    return e=='🐴' or e=='🐍' or e=='🕷'
+end
+
 function oob(pos)
     local px,py=strpos(pos)
     return px<cam.x or py<cam.y or px>=cam.x+24 or py>=cam.y+12
@@ -222,12 +226,16 @@ function cavegen()
         rem(filled[1],s)
         map[🐍pos]={'🐍',f=🐍_ai,hp=dex_nmy['🐍'].maxhp}
     end
-    if dungeonlevel>=2 then
+    if dungeonlevel()>=2 then
         s=random(#filled[1])
         local 🕷pos=filled[1][s]
         rem(filled[1],s)
         map[🕷pos]={'🕷',f=🕷_ai,hp=dex_nmy['🕷'].maxhp}
     end
+end
+
+function in_dungeon()
+    return cam.y<0
 end
 
 function dungeonlevel()
@@ -260,7 +268,8 @@ function generic_ai_f(id,playertarget,postupdate)
             else
                 enemy_raycast(pos)
             end
-        elseif 🆔.state=='located' then
+        end
+        if 🆔.state=='located' then
             if #🆔.path>0 then
                 newpos=🆔.path[1]
                 if not is_solid(newpos) and not 😋collide(newpos) then
@@ -271,10 +280,12 @@ function generic_ai_f(id,playertarget,postupdate)
                     end
                     map[newpos]=🆔
                     print(fmt('nmy @ %s walks into %s',pos,newpos))
+                    
                     playertarget(newpos)
+                    
                     enemy_raycast(newpos)
                 else
-                    enemy_raycast(pos)
+                    enemy_raycast(newpos or pos)
                 end
             else
                 print(fmt('nmy @ %s is bored.',pos))
@@ -284,7 +295,7 @@ function generic_ai_f(id,playertarget,postupdate)
             end
         end
 
-        if postupdate then postupdate(newpos or pos)
+        if postupdate then postupdate(🆔,newpos or pos) end
     end
 end
 
@@ -296,6 +307,8 @@ end)
     if not playerbite(pos,2,3) then
         local 🕷=map[pos]
         if 🕷.cooldown==nil then
+            print('webbing')
+            enemy_raycast(pos)
             if find(enemy_rays,posstr(😋.x,😋.y)) then
                 😋.webbed=2
                 😋[1]='🕸️'
@@ -304,8 +317,8 @@ end)
             end
         end
     end
-end,function(pos) 
-    if 🕷.cooldown>0 then 🕷.cooldown=🕷.cooldown-1
+end,function(🕷,pos) 
+    if 🕷.cooldown and 🕷.cooldown>0 then 🕷.cooldown=🕷.cooldown-1
     else 🕷.cooldown=nil end
 end)
 

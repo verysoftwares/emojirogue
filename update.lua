@@ -21,14 +21,14 @@ function update(hw_dt)
     end
 
     local moved=false
-    if not moved and not is_solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then 😋.y=😋.y-1; moved=true end
-    if not moved and not is_solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then 😋.y=😋.y+1; moved=true end
-    if not moved and not is_solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4') or tapped('h'))  then 😋.x=😋.x-1; moved=true end
-    if not moved and not is_solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6') or tapped('k')) then 😋.x=😋.x+1; moved=true end
-    if not moved and not is_solid(posstr(😋.x-1,😋.y-1)) and (tapped('kp7') or tapped('y')) then 😋.x=😋.x-1; 😋.y=😋.y-1; moved=true end
-    if not moved and not is_solid(posstr(😋.x-1,😋.y+1)) and (tapped('kp1') or tapped('b')) then 😋.x=😋.x-1; 😋.y=😋.y+1; moved=true end
-    if not moved and not is_solid(posstr(😋.x+1,😋.y-1)) and (tapped('kp9') or tapped('i')) then 😋.x=😋.x+1; 😋.y=😋.y-1; moved=true end
-    if not moved and not is_solid(posstr(😋.x+1,😋.y+1)) and (tapped('kp3') or tapped('m')) then 😋.x=😋.x+1; 😋.y=😋.y+1; moved=true end
+    if not moved and not is_solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then if not 😋.webbed then 😋.y=😋.y-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then if not 😋.webbed then 😋.y=😋.y+1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4') or tapped('h'))  then if not 😋.webbed then 😋.x=😋.x-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6') or tapped('k')) then if not 😋.webbed then 😋.x=😋.x+1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y-1)) and (tapped('kp7') or tapped('y')) then if not 😋.webbed then 😋.x=😋.x-1; 😋.y=😋.y-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y+1)) and (tapped('kp1') or tapped('b')) then if not 😋.webbed then 😋.x=😋.x-1; 😋.y=😋.y+1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y-1)) and (tapped('kp9') or tapped('i')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y+1)) and (tapped('kp3') or tapped('m')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y+1 end; moved=true end
 
     if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔽' and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) and tapped('<') then
         cam.y=cam.y-12
@@ -207,7 +207,7 @@ end
 memo={}
 
 function enemy_raycast(pos)
-    print(fmt('snek @ %s sees surroundings',pos))
+    print(fmt('nmy @ %s sees surroundings',pos))
     local ex,ey=strpos(pos)
     enemy_rays={}
     for i=0,530-1 do
@@ -219,7 +219,8 @@ function enemy_raycast(pos)
             ry=ry+sin(a)*0.8
             local tx,ty=flr((rx-16-32)/64),flr((ry-16-32)/(64+11))
             if posstr(tx,ty)==posstr(😋.x,😋.y) then
-                print(fmt('snek spotted player @ %d:%d!',tx,ty))
+                print(fmt('nmy spotted player @ %d:%d!',tx,ty))
+                if not find(enemy_rays,posstr(tx,ty)) then ins(enemy_rays,posstr(tx,ty)) end
                 enemy_pathfind(pos,posstr(😋.x,😋.y))
                 return
             end
@@ -240,7 +241,7 @@ function enemy_pathfind(pos,tgt)
         if px==tx and py==ty then
             map[pos].path={}
             map[pos].state='located'
-            print(fmt('snek @ %s in state located',pos))
+            print(fmt('nmy @ %s in state located',pos))
             local pathtile=v
             while pathtile do
                 print(pathtile[1])
@@ -276,14 +277,6 @@ function entity_update()
         if map[pos] and map[pos].f and not map[pos].updated then map[pos].updated=true; map[pos].f(pos) end 
     end
     end
-end
-
-function in_dungeon()
-    return cam.y<0
-end
-
-function is_entity(e)
-    return e=='🐴' or e=='🐍'
 end
 
 function throwselect()
