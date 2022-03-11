@@ -58,7 +58,7 @@ function update(hw_dt)
         entity_update()
 
         if in_dungeon() then raycast() end        
-    elseif 😋.webbed then
+    elseif moved and 😋.webbed then
         if 😋.webbed<=0 then shout('You\'re no longer webbed.'); 😋[1]='😋'; 😋.webbed=nil
         else shout('You\'re still webbed!') end
         if 😋.webbed then 😋.webbed=😋.webbed-random(2) end
