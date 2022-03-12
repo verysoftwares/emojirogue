@@ -150,6 +150,10 @@ function is_entity(e)
     return e=='🐴' or e=='🐍' or e=='🕷'
 end
 
+function is_plant(e)
+    return find(dex[1],e)
+end
+
 function oob(pos)
     local px,py=strpos(pos)
     return px<cam.x or py<cam.y or px>=cam.x+24 or py>=cam.y+12

@@ -1,4 +1,5 @@
 😋 = {'😋',x=20+6+2,y=3+1,hp=9}
+turn=0
 
 function update(hw_dt)
     if tapped('r') then love.event.quit('restart') end
@@ -53,16 +54,7 @@ function update(hw_dt)
     end
 
     if moved and not 😋.webbed then
-        header.msg=''
-
-        if 😋.y>=cam.y+12 then cam.y=cam.y+12 end
-        if 😋.x>=cam.x+24 then cam.x=cam.x+24 end
-        if 😋.y<cam.y then cam.y=cam.y-12 end
-        if 😋.x<cam.x then cam.x=cam.x-24 end
-
-        entity_update()
-
-        if in_dungeon() then raycast() end        
+        end_turn()        
     elseif moved and 😋.webbed then
         if 😋.webbed<=0 then shout('You\'re no longer webbed.'); 😋[1]='😋'; 😋.webbed=nil
         else shout('You\'re still webbed!') end
@@ -308,10 +300,27 @@ function throwselect()
                 shout('It didn\'t do any damage.')
             end
             rem(inventory,inventory.i)
+            end_turn()
             love.update=update
         end
     end
     t=t+1
+end
+
+function end_turn()
+    header.msg=''
+
+    if 😋.y>=cam.y+12 then cam.y=cam.y+12 end
+    if 😋.x>=cam.x+24 then cam.x=cam.x+24 end
+    if 😋.y<cam.y then cam.y=cam.y-12 end
+    if 😋.x<cam.x then cam.x=cam.x-24 end
+
+    entity_update()
+    plant_update()
+
+    if in_dungeon() then raycast() end
+
+    turn=turn+1
 end
 
 function plantselect()
@@ -326,10 +335,69 @@ function plantselect()
         map[posstr(😋.x,😋.y)]={inventory[inventory.i][1]}
         rem(inventory,inventory.i)
         love.update=update
+        end_turn()
         shout('')
     end
 
     t=t+1
+end
+
+function plant_update()
+    map_buffer={}
+    plants={}
+    for y=0,12-1 do
+    for x=0,24-1 do
+        local pos=posstr(cam.x+x,cam.y+y)
+        if map[pos] then map_buffer[pos]=map[pos][1]
+        if is_plant(map_buffer[pos]) and not find(plants,map_buffer[pos]) then
+            ins(plants,map_buffer[pos])
+        end
+        end
+    end
+    end
+    table.sort(plants,function(a,b) return find(dex[1],a)<find(dex[1],b) end)
+    for i,v in ipairs(plants) do
+    for y=0,12-1 do
+    for x=0,24-1 do
+        local neigh=neighbours(posstr(x,y))
+        if map_buffer[posstr(x,y)]==v then
+            if v=='🌱' and #neigh<2 or #neigh>3 then
+                map[posstr(x,y)]=nil
+            end
+        end
+        if not map_buffer[posstr(x,y)] then
+            if findmap(neighbours,v) then
+                if v=='🌱' and #neigh==3 then
+                    map[posstr(x,y)]={'🌱'}
+                end
+            end
+        end
+    end
+    end    
+    end
+end
+
+function findmap(tbl,id)
+    for i,v in ipairs(tbl) do
+        if map_buffer[v]==id then
+            return true
+        end
+    end
+    return false
+end
+
+function neighbours(pos)
+    local px,py=strpos(pos)
+    out={}
+    if map_buffer[posstr(px-1,py)] then ins(out,posstr(px-1,py)) end
+    if map_buffer[posstr(px-1,py-1)] then ins(out,posstr(px-1,py-1)) end
+    if map_buffer[posstr(px,py-1)] then ins(out,posstr(px,py-1)) end
+    if map_buffer[posstr(px+1,py-1)] then ins(out,posstr(px+1,py-1)) end
+    if map_buffer[posstr(px+1,py)] then ins(out,posstr(px+1,py)) end
+    if map_buffer[posstr(px+1,py+1)] then ins(out,posstr(px+1,py+1)) end
+    if map_buffer[posstr(px,py+1)] then ins(out,posstr(px,py+1)) end
+    if map_buffer[posstr(px-1,py+1)] then ins(out,posstr(px-1,py+1)) end
+    return out
 end
 
 love.update= update
