@@ -1,9 +1,14 @@
-😋 = {'😋',x=6,y=3,hp=9}
+😋 = {'😋',x=20+6+2,y=3+1,hp=9}
 
 function update(hw_dt)
     if tapped('r') then love.event.quit('restart') end
 
     if tapped('c') then love.update=talkselect; shout('Chat with whom?') end
+
+    if tapped('p') then 
+        if map[posstr(😋.x,😋.y)] then shout('This space is occupied.')
+        else love.update=plantselect; shout('Plant what?') end
+    end
 
     if tapped('t') then 
         throwtgt={}
@@ -306,6 +311,24 @@ function throwselect()
             love.update=update
         end
     end
+    t=t+1
+end
+
+function plantselect()
+    if tapped('escape') then love.update=update end
+
+    if tapped('left')  then inventory.i=inventory.i-1 end
+    if tapped('right') then inventory.i=inventory.i+1 end
+    if inventory.i>#inventory then inventory.i=1 end
+    if inventory.i<1 then inventory.i=#inventory end
+
+    if tapped('return') then
+        map[posstr(😋.x,😋.y)]={inventory[inventory.i][1]}
+        rem(inventory,inventory.i)
+        love.update=update
+        shout('')
+    end
+
     t=t+1
 end
 

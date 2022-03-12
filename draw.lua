@@ -36,7 +36,7 @@ palettes={
 }
 --for i=1,13*6 do ins(palettes,{randomchoice(pal),randomchoice(pal),randomchoice(pal)}) end
 
-cam={x=0,y=0}
+cam={x=24,y=0}
     
 function draw()
     bg(.2 +.8 *( t     *.1 *.2) %1, 
@@ -113,6 +113,18 @@ function draw()
             gridprint(v[1],i,11,false,true)
             if i>=22 then break end
         end        
+    end
+
+    if love.update==plantselect then
+        for dx=0,24-1 do
+            fg(0.8,0.8,0.8)
+            if dx==inventory.i then fg(0.4,0.8,0.4) end
+            rect('fill',16+dx*64,16+11*(64+11),64,64+11)
+        end
+        for i,v in ipairs(inventory) do
+            gridprint(v[1],i,11,false,true)
+            if i>=22 then break end
+        end
     end
 
     if love.update==dialogue then

@@ -97,7 +97,14 @@ end
 
 map={}
 for y=0,12-1 do for x=0,24-1 do
-  map[posstr(x,y)]= {dex[1][flr(perlin(y*.1,x*.1,2472472)*#dex[1])+1]}
+    --map[posstr(x,y)]= {dex[1][flr(perlin(y*.1,x*.1,2472472)*#dex[1])+1]}
+    if perlin(y*.35,x*.35,24724)<0.45 then map[posstr(x,y)]={'🌲'} end
+end end
+for y=0,12-1 do for x=24*2,24*3-1 do
+    if perlin(y*.35,x*.35,24724)<0.45 then map[posstr(x,y)]={'🌲'} end
+end end
+for y=12,12*2-1 do for x=24,24*2-1 do
+    if perlin(y*.35,x*.35,24724)<0.45 then map[posstr(x,y)]={'🌲'} end
 end end
 
 for my=0,4 do
@@ -132,7 +139,7 @@ for i=0,24-1 do
 end
 
 function is_solid(pos)
-    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️' or map[pos][1]=='🐍' or map[pos][1]=='🕷')
+    return map[pos] and (map[pos][1]=='🧱' or map[pos][1]=='🐴' or map[pos][1]=='⛰️' or map[pos][1]=='🐍' or map[pos][1]=='🕷' or map[pos][1]=='🌲')
 end
 
 function is_seethru(pos)
