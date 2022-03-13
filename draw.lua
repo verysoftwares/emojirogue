@@ -96,6 +96,7 @@ function draw()
     
     if love.update==throwselect then
         for i,k in ipairs(throwtgt) do
+            if i>9 then break end
             if (t+i*8)%48<32 then
             local kx,ky=strpos(k)
             fg(bgcolor)

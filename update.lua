@@ -2,13 +2,28 @@
 turn=0
 
 function update(hw_dt)
-    if tapped('r') then love.event.quit('restart') end
-
+    --if tapped('r') then love.event.quit('restart') end
+    local moved=false
+    
     if tapped('c') then love.update=talkselect; shout('Chat with whom?') end
+
+    if tapped(',') then 
+        if map[posstr(😋.x,😋.y)] then
+            ins(inventory,map[posstr(😋.x,😋.y)])
+            map[posstr(😋.x,😋.y)]=nil
+            shout(fmt('Picked up %s.',inventory[#inventory][1]))
+        end
+        moved=true
+    end
 
     if tapped('p') then 
         if map[posstr(😋.x,😋.y)] then shout('This space is occupied.')
-        else love.update=plantselect; shout('Plant what?') end
+        else 
+            love.update=plantselect; shout('Plant what?') 
+            if not plant_places[posstr(cam.x,cam.y)] then
+                plant_places[posstr(cam.x,cam.y)]={}
+            end
+        end
     end
 
     if tapped('t') then 
@@ -26,7 +41,6 @@ function update(hw_dt)
         end
     end
 
-    local moved=false
     if not moved and not is_solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then if not 😋.webbed then 😋.y=😋.y-1 end; moved=true end
     if not moved and not is_solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then if not 😋.webbed then 😋.y=😋.y+1 end; moved=true end
     if not moved and not is_solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4') or tapped('h'))  then if not 😋.webbed then 😋.x=😋.x-1 end; moved=true end
@@ -68,7 +82,7 @@ function update(hw_dt)
 end
 
 function talkselect()
-    for i,v in ipairs({{'up',0,-1},{'down',0,1},{'left',-1,0},{'right',1,0}}) do
+    for i,v in ipairs({{'up',0,-1},{'down',0,1},{'left',-1,0},{'right',1,0},{'kp8',0,-1},{'kp2',0,1},{'kp4',-1,0},{'kp6',1,0},{'kp7',-1,-1},{'kp9',1,-1},{'kp1',-1,1},{'kp3',1,1},{'u',0,-1},{'n',0,1},{'h',-1,0},{'k',1,0},{'y',-1,-1},{'i',1,-1},{'b',-1,1},{'m',1,1}}) do
     if tapped(v[1]) then
         local pos=posstr(😋.x+v[2],😋.y+v[3])
         if map[pos] then
@@ -285,6 +299,7 @@ function throwselect()
     if inventory.i<1 then inventory.i=#inventory end
 
     for i,v in ipairs(throwtgt) do
+        if i>9 then break end
         if tapped(tostring(i)) then
             if inventory[inventory.i][1]=='🥛' then
                 map[v].hp=map[v].hp-2
@@ -316,12 +331,17 @@ function end_turn()
     if 😋.x<cam.x then cam.x=cam.x-24 end
 
     entity_update()
-    plant_update()
+    if not in_dungeon() and plant_places[posstr(cam.x,cam.y)] and plant_places[posstr(cam.x,cam.y)].sc_turn and turn-plant_places[posstr(cam.x,cam.y)].sc_turn>0 and (turn-plant_places[posstr(cam.x,cam.y)].sc_turn)%10==0 then
+        print(plant_update)
+        plant_update()
+    end
 
     if in_dungeon() then raycast() end
 
     turn=turn+1
 end
+
+plant_places={}
 
 function plantselect()
     if tapped('escape') then love.update=update end
@@ -335,6 +355,9 @@ function plantselect()
         map[posstr(😋.x,😋.y)]={inventory[inventory.i][1]}
         rem(inventory,inventory.i)
         love.update=update
+        if not plant_places[posstr(cam.x,cam.y)].sc_turn then
+            plant_places[posstr(cam.x,cam.y)].sc_turn=turn
+        end
         end_turn()
         shout('')
     end
@@ -347,8 +370,8 @@ function plant_update()
     plants={}
     for y=0,12-1 do
     for x=0,24-1 do
-        local pos=posstr(cam.x+x,cam.y+y)
-        if map[pos] then map_buffer[pos]=map[pos][1]
+        local pos=posstr(x,y)
+        if map[posstr(cam.x+x,cam.y+y)] then map_buffer[pos]=map[posstr(cam.x+x,cam.y+y)][1]
         if is_plant(map_buffer[pos]) and not find(plants,map_buffer[pos]) then
             ins(plants,map_buffer[pos])
         end
@@ -362,13 +385,15 @@ function plant_update()
         local neigh=neighbours(posstr(x,y))
         if map_buffer[posstr(x,y)]==v then
             if v=='🌱' and #neigh<2 or #neigh>3 then
-                map[posstr(x,y)]=nil
+                map[posstr(cam.x+x,cam.y+y)]=nil
+                print(posstr(cam.x+x,cam.y+y))
             end
         end
         if not map_buffer[posstr(x,y)] then
-            if findmap(neighbours,v) then
+            if findmap(neigh,v) then
+                print(#neigh)
                 if v=='🌱' and #neigh==3 then
-                    map[posstr(x,y)]={'🌱'}
+                    map[posstr(cam.x+x,cam.y+y)]={'🌱'}
                 end
             end
         end
