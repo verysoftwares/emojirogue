@@ -325,10 +325,24 @@ end
 function end_turn()
     header.msg=''
 
+    local old_cam={x=cam.x,y=cam.y}
     if 😋.y>=cam.y+12 then cam.y=cam.y+12 end
     if 😋.x>=cam.x+24 then cam.x=cam.x+24 end
     if 😋.y<cam.y then cam.y=cam.y-12 end
     if 😋.x<cam.x then cam.x=cam.x-24 end
+    if old_cam.x~=cam.x or old_cam.y~=cam.y then
+        if plant_places[posstr(old_cam.x,old_cam.y)] then
+            plant_places[posstr(old_cam.x,old_cam.y)].leftturn=turn
+        end
+        if plant_places[posstr(cam.x,cam.y)] and plant_places[posstr(cam.x,cam.y)].leftturn and plant_places[posstr(cam.x,cam.y)].sc_turn then
+            for i=plant_places[posstr(cam.x,cam.y)].leftturn,turn do
+                if (i-plant_places[posstr(cam.x,cam.y)].sc_turn)%10==0 then
+                    plant_update()
+                end
+            end
+            plant_places[posstr(cam.x,cam.y)].leftturn=nil
+        end
+    end
 
     entity_update()
     if not in_dungeon() and plant_places[posstr(cam.x,cam.y)] and plant_places[posstr(cam.x,cam.y)].sc_turn and turn-plant_places[posstr(cam.x,cam.y)].sc_turn>0 and (turn-plant_places[posstr(cam.x,cam.y)].sc_turn)%10==0 then
