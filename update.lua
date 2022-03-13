@@ -16,6 +16,8 @@ function update(hw_dt)
         moved=true
     end
 
+    if tapped('q') then love.update=quaffselect; shout('Quaff what?') end
+
     if tapped('p') then 
         if in_dungeon() then shout('Can\'t plant in the dungeon.')
         else 
@@ -355,6 +357,14 @@ function end_turn()
 
     if in_dungeon() then raycast() end
 
+    if 😋.poison then
+        😋.poison=😋.poison-1
+        if 😋.poison==0 then 😋.poison=nil end
+        shout('You take poison damage!')
+        😋.hp=😋.hp-1
+        if 😋.hp<=0 then 😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover end
+    end
+
     turn=turn+1
 end
 
@@ -382,6 +392,44 @@ function plantselect()
     t=t+1
 end
 
+function quaffselect()
+    if tapped('escape') then love.update=update end
+
+    if tapped('left')  then inventory.i=inventory.i-1 end
+    if tapped('right') then inventory.i=inventory.i+1 end
+    if inventory.i>#inventory then inventory.i=1 end
+    if inventory.i<1 then inventory.i=#inventory end
+
+    if tapped('return') then
+        if inventory[inventory.i]=='🥛' then
+            😋.hp=😋.hp-2
+            shout('Ouch!')
+            if 😋.hp<=0 then 😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover end
+        elseif inventory[inventory.i]=='☕' then
+            local oldhp=😋.hp
+            😋.hp=😋.hp+6
+            if 😋.hp>9 then 😋.hp=9 end
+            shout(fmt('Healed %d hit points!',))
+        elseif inventory[inventory.i]=='🍵' then
+            😋.poison=4
+            shout('Yuck, poison!')
+        elseif inventory[inventory.i]=='🍷' then
+            shout('That was a very bad idea.')
+            😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover 
+        end
+        rem(inventory,inventory.i)
+        love.update=update
+        end_turn()
+    end
+
+    t=t+1
+end
+
+function gameover()
+    if tapped('r') then love.event.quit('restart') end
+    t=t+1
+end
+
 function plant_update()
     map_buffer={}
     plants={}
@@ -405,12 +453,33 @@ function plant_update()
                 map[posstr(cam.x+x,cam.y+y)]=nil
                 print(posstr(cam.x+x,cam.y+y))
             end
+            if v=='🥀' and #neigh<3 or #neigh>4 then
+                map[posstr(cam.x+x,cam.y+y)]=nil
+                print(posstr(cam.x+x,cam.y+y))
+            end
+            if v=='🌷' and #neigh<2 or #neigh>3 then
+                map[posstr(cam.x+x,cam.y+y)]=nil
+                print(posstr(cam.x+x,cam.y+y))
+            end
+            if v=='🌹' and #neigh<5 or #neigh>6 then
+                map[posstr(cam.x+x,cam.y+y)]=nil
+                print(posstr(cam.x+x,cam.y+y))
+            end
         end
         if not map_buffer[posstr(x,y)] then
             if findmap(neigh,v) then
                 print(#neigh)
                 if v=='🌱' and #neigh==3 then
                     map[posstr(cam.x+x,cam.y+y)]={'🌱'}
+                end
+                if v=='🥀' and #neigh==4 then
+                    map[posstr(cam.x+x,cam.y+y)]={'🥀'}
+                end
+                if v=='🌷' and #neigh==2 then
+                    map[posstr(cam.x+x,cam.y+y)]={'🌷'}
+                end
+                if v=='🌹' and #neigh==5 then
+                    map[posstr(cam.x+x,cam.y+y)]={'🌹'}
                 end
             end
         end
