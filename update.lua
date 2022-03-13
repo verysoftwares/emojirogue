@@ -17,11 +17,14 @@ function update(hw_dt)
     end
 
     if tapped('p') then 
-        if map[posstr(😋.x,😋.y)] then shout('This space is occupied.')
+        if in_dungeon() then shout('Can\'t plant in the dungeon.')
         else 
+            if map[posstr(😋.x,😋.y)] then shout('This space is occupied.') 
+            else
             love.update=plantselect; shout('Plant what?') 
             if not plant_places[posstr(cam.x,cam.y)] then
                 plant_places[posstr(cam.x,cam.y)]={}
+            end
             end
         end
     end
