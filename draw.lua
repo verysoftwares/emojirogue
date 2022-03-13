@@ -133,6 +133,14 @@ function draw()
     end
 
     if love.update==plantselect then
+        for dy=8,12-1 do
+        for dx=0,24-1 do
+            fg(0.2,0.2,0.6)
+            rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
+        end
+        end
+        fg(0.8,0.8,0.8)
+        if find(dex[1],inventory[inventory.i][1]) then gridprint(dex_plantrules[inventory[inventory.i][1]],1,8,false,true) end
         for dx=0,24-1 do
             fg(0.8,0.8,0.8)
             if dx==inventory.i-inventory.cam+1 then fg(0.4,0.8,0.4) end
@@ -177,15 +185,22 @@ function draw()
 
     if love.update==craft then
         local r,g,b,a=lg.getColor()
-        for dy=8,12-1 do
+        for dy=1,12-1 do
         for dx=0,24-1 do
+            if dy~=7 then
             fg(0.2,0.2,0.6)
-            if (dy==9 and dx>0 and dx<=5) or dy==11 then fg(0.8,0.8,0.8) end
+            if (dy==9 and dx>0 and dx<=5) or dy==11 or dy==1 then fg(0.8,0.8,0.8) end
             if dy==8 then fg(palettes[8]) end
             if dy==11 and dx==inventory.i-inventory.cam+1 then fg(0.4,0.8,0.4) end
             rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
+            end
         end
         end
+        gridprint('🌱x3 Potion of Hurt',1,2,false,true)
+        gridprint('🌱x2🥀x1 SmolHeal Potion',1,3,false,true)
+        gridprint('🌱x1🌷x2 Poison Potion',1,4,false,true)
+        gridprint('🌱x2🌹x2 Corrosion Potion',1,5,false,true)
+        gridprint('🌱x1🥀x1☘x2 Warp Potion',1,6,false,true)
         for i,v in ipairs(craft_area) do
             gridprint(v[1],i,9,true)
         end
@@ -197,6 +212,7 @@ function draw()
         end
         fg(0.2,0.2,0.6)
         gridprint('Craft:',1,8,true,true)
+        gridprint('Recipes:',1,1,true,true)
         fg(r,g,b,a)
     end
 end

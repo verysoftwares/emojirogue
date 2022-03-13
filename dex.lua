@@ -42,22 +42,33 @@ dex_pal={
     ['🐍']={0.4,0.9,0.4},
     ['🌷']={0.2,0.3,0.2},
     ['🌹']={0.6,0.8,0.5},
-    ['☘']={0.3,0.4,0.7},
+    ['☘']={0.3,0.4,0.8},
     ['🍵']={0.2,0.3,0.2},
     ['🍷']={0.6,0.8,0.5},
-    ['🍸']={0.3,0.4,0.7},
+    ['🍸']={0.3,0.4,0.8},
 }
 
 dex_recipes={
     ['🌱🌱🌱']={'🥛',name='Potion of Hurt'},
     ['🌱🌱🥀']={'☕',name='SmolHeal Potion'},
-    ['🌱🌷🌷']={'🍵',name='Potion of Poison'},
-    ['🌱🌱🌹🌹']={'🍷',name='Potion of Corrosion'},
-    ['🌱🥀☘☘']={'🍸',name='Potion of Teleportation'},
+    ['🌱🌷🌷']={'🍵',name='Poison Potion'},
+    ['🌱🌱🌹🌹']={'🍷',name='Corrosion Potion'},
+    ['🌱🥀☘☘']={'🍸',name='Warp Potion'},
     ['fail']={'💩',name='Failed potion'},
 }
 
 dex_nmy={
     ['🐍']={maxhp=3},
     ['🕷']={maxhp=5},
+    ['👺']={maxhp=6},
+    ['🐜']={maxhp=8},
+    ['🗿']={maxhp=8},
+}
+
+dex_plantrules={
+    ['🌱']='Dies with <2 and >3 neighbours, spawns with 3',
+    ['🥀']='Dies with <3 and >4 neighbours, spawns with 4',
+    ['🌷']='Dies with <2 and >3 neighbours, spawns with 2',
+    ['🌹']='Dies with <5 and >6 neighbours, spawns with 5',
+    ['☘']='Dies with <1 and >2 neighbours, spawns with 1',
 }

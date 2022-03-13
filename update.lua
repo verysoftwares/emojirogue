@@ -34,18 +34,19 @@ function update(hw_dt)
     end
 
     if tapped('t') then 
-        throwtgt={}
-        if rays then
-        for i,v in ipairs(rays) do
-            if map[v] and is_entity(map[v][1]) then
-                ins(throwtgt,v)
-            end
-        end
-        end
-        if #throwtgt==0 then shout('No targets nearby.')
-        else love.update=throwselect; 
+        --throwtgt={}
+        --if rays then
+        --for i,v in ipairs(rays) do
+        --    if map[v] and is_entity(map[v][1]) then
+        --        ins(throwtgt,v)
+        --    end
+        --end
+        --end
+        --if #throwtgt==0 then shout('No targets nearby.')
+        --else
+        love.update=throwselect; 
         shout('Throw what and where?') 
-        end
+        --end
     end
 
     if not moved and not is_solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then if not 😋.webbed then 😋.y=😋.y-1 end; moved=true end
@@ -185,7 +186,7 @@ function craft()
                         if utf8.len(queue)~=0 then goto failure
                         else
                         ins(inventory,deepcopy(r))
-                        shout(fmt('Crafted %s!',r.name))
+                        shout(fmt('Crafted %s',r.name))
                         goto success
                         end
                     end
@@ -302,8 +303,9 @@ end
 function throwselect()
     if tapped('escape') then love.update=update end
 
-    if tapped('left')  then inventory.i=inventory.i-1 end
-    if tapped('right') then inventory.i=inventory.i+1 end
+    local imoved=false
+    if tapped('left')  then inventory.i=inventory.i-1; imoved=true end
+    if tapped('right') then inventory.i=inventory.i+1; imoved=true end
     if inventory.i>#inventory then inventory.i=1 end
     if inventory.i<1 then inventory.i=#inventory end
     if inventory.i>=inventory.cam+22 then inventory.cam=inventory.cam+22 end
@@ -323,10 +325,12 @@ function throwselect()
         end
     end
     end
+    end
+    if #throwtgt==0 and imoved then shout('No targets nearby.') end
 
     for i,v in ipairs(throwtgt) do
         if i>9 then break end
-        if tapped(tostring(i)) then
+        if tapped(tostring(i)) or tapped(fmt('kp%d',i)) then
             if inventory[inventory.i][1]=='🥛' then
                 if map[v][1]=='🗿' then
                 shout('The 🗿 resisted damage!')
@@ -345,9 +349,14 @@ function throwselect()
                 map[v].poison=4
                 shout(fmt('The %s is poisoned!',map[v][1]))
             elseif inventory[inventory.i][1]=='🍷' then
+                if map[v][1]=='⛰️' then
+                    shout('The wall crumbles!')
+                    map[v]=nil
+                else
                 map[v].hp=map[v].hp-4
                 shout(fmt('It hit the %s for 4 damage!',map[v][1]))
                 if map[v].hp<=0 then shout(fmt('The %s withered into a %s.',map[v][1],wither(map[v][1]))); map[v]={wither(map[v][1])} end
+                end
             elseif inventory[inventory.i][1]=='🍸' then
                 shout(fmt('The %s vanishes before your eyes!',map[v][1]))
                 local empty={}

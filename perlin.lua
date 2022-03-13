@@ -206,9 +206,6 @@ function cavegen()
         if perlin(y*.35,x*.35,24724)<0.5 then
         map[posstr(x,y)]= {'⛰️'}
         end
-        if perlin(y*.35,x*.35,24724)>0.7 then
-        map[posstr(x,y)]= {'🌱'}
-        end
     end end
     filled={}
     for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
@@ -231,17 +228,55 @@ function cavegen()
     local downstairs=filled[1][s]
     rem(filled[1],s)
     map[downstairs]={'🔽'}
-    for i=1,random(3) do
-        s=random(#filled[1])
-        local 🐍pos=filled[1][s]
-        rem(filled[1],s)
-        map[🐍pos]={'🐍',f=🐍_ai,hp=dex_nmy['🐍'].maxhp}
+    
+    plantgen()
+    enemygen()
+end
+
+function plantgen()
+    local plant_list={'🌱'}
+    if dungeonlevel()>=2 then ins(plant_list,'🌱') ins(plant_list,'🥀') end
+    if dungeonlevel()>=3 then rem(plant_list,find(plant_list,'🌱')); ins(plant_list,'🥀') end
+    if dungeonlevel()>=4 then rem(plant_list,find(plant_list,'🌱')); ins(plant_list,'🌷') end
+    if dungeonlevel()>=5 then rem(plant_list,find(plant_list,'🥀')); ins(plant_list,'🌷') end
+    if dungeonlevel()>=6 then rem(plant_list,find(plant_list,'🥀')); ins(plant_list,'🌹') end
+    if dungeonlevel()>=7 then rem(plant_list,find(plant_list,'🌷')); ins(plant_list,'🌹') end
+    if dungeonlevel()>=8 then rem(plant_list,find(plant_list,'🌹')); ins(plant_list,'☘') end
+
+    for i,v in ipairs(filled[1]) do
+    local x,y=strpos(v)
+    if perlin(y*.35,x*.35,24724)>0.7 then
+    map[posstr(x,y)]= randomchoice(plant_list)
     end
-    if dungeonlevel()>=2 then
+    end
+    for i,f in ipairs(filled) do
+        if i>=2 then
+            for j,v in ipairs(f) do
+                local x,y=strpos(v)
+                if perlin(y*.35,x*.35,24724)>0.55 then
+                map[posstr(x,y)]= randomchoice(plant_list)
+                end
+            end
+        end
+    end
+end
+
+function enemygen()
+    local enemy_list={'🐍'}
+    if dungeonlevel()>=2 then ins(enemy_list,'🐍'); ins(enemy_list,'🕷') end
+    if dungeonlevel()>=3 then ins(enemy_list,'🕷') end
+    if dungeonlevel()>=4 then rem(enemy_list,find(enemy_list,'🐍')); ins(enemy_list,'👺') end
+    if dungeonlevel()>=5 then rem(enemy_list,find(enemy_list,'🐍')); rem(enemy_list,find(enemy_list,'🕷')); ins(enemy_list,'👺') end
+    if dungeonlevel()>=6 then rem(enemy_list,find(enemy_list,'🕷')); rem(enemy_list,find(enemy_list,'👺')); ins(enemy_list,'🐜') end
+    if dungeonlevel()>=7 then ins(enemy_list,'🐜'); ins(enemy_list,'🗿') end
+    if dungeonlevel()>=8 then rem(enemy_list,find(enemy_list,'👺')); ins(enemy_list,'🗿') end
+    
+    for i=2,random(2,4) do
         s=random(#filled[1])
-        local 🕷pos=filled[1][s]
+        local 🆔pos=filled[1][s]
         rem(filled[1],s)
-        map[🕷pos]={'🕷',f=🕷_ai,hp=dex_nmy['🕷'].maxhp}
+        local e=randomchoice(enemy_list)
+        map[🆔pos]={e,f=_G[fmt('%s_ai',e)],hp=dex_nmy[e].maxhp}
     end
 end
 
@@ -253,11 +288,13 @@ function dungeonlevel()
     return -cam.y/12
 end
 
-function playerbite(pos,min,max)
+function playerbite(pos,min,max,verb)
+    verb=verb or 'bite'
     if 😋adjacent(pos) then
         local dmg=random(min,max)
-        shout(fmt('The %s bites you for %d damage!',map[pos][1],dmg))
+        shout(fmt('The %s %ss you for %d damage!',map[pos][1],verb,dmg))
         😋.hp=😋.hp-dmg
+        if 😋.hp<=0 then 😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover end
         return true
     end
     return false
@@ -347,6 +384,33 @@ end)
 end,function(🕷,pos) 
     if 🕷.cooldown and 🕷.cooldown>0 then 🕷.cooldown=🕷.cooldown-1
     else 🕷.cooldown=nil end
+end)
+
+👺_ai=generic_ai_f('👺',function (pos)
+    if not playerbite(pos,2,4,'hit') then
+        local 👺=map[pos]
+        if 👺.cooldown==nil then
+            enemy_raycast(pos)
+            if find(enemy_rays,posstr(😋.x,😋.y)) then
+                local dmg=random(2,3)
+                shout(fmt('The 👺 shoots you with a bow for %d damage!',dmg))
+                👺.cooldown=2
+                😋.hp=😋.hp-dmg
+                if 😋.hp<=0 then 😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover end
+            end
+        end
+    end
+end,function(👺,pos) 
+    if 👺.cooldown and 👺.cooldown>0 then 👺.cooldown=👺.cooldown-1
+    else 👺.cooldown=nil end
+end)
+
+🐜_ai=generic_ai_f('🐜',function (pos)
+    playerbite(pos,3,4,'hit')
+end)
+
+🗿_ai=generic_ai_f('🗿',function (pos)
+    playerbite(pos,4,5,'hit')
 end)
 
 filled={}
