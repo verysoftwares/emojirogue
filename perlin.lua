@@ -263,6 +263,14 @@ function playerbite(pos,min,max)
     return false
 end
 
+function wither(e)
+    if e=='🐍' then return '🌱' end
+    if e=='🕷' then return '🥀' end
+    if e=='👺' then return '🌷' end
+    if e=='🐜' then return '🌹' end
+    if e=='🗿' then return '☘' end
+end
+
 function generic_ai_f(id,playertarget,postupdate)
     return function(pos)
         local 🆔=map[pos]

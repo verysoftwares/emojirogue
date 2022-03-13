@@ -313,7 +313,7 @@ function throwselect()
             if inventory[inventory.i][1]=='🥛' then
                 map[v].hp=map[v].hp-2
                 shout(fmt('It hit the %s for 2 damage!',map[v][1]))
-                if map[v].hp<=0 then map[v]=nil end
+                if map[v].hp<=0 then map[v]={wither(map[v][1])} end
             elseif inventory[inventory.i][1]=='☕' then
                 map[v].hp=map[v].hp+2
                 if map[v].hp>dex_nmy[map[v][1]].maxhp then
@@ -385,6 +385,7 @@ function plantselect()
     if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
     if tapped('return') then
+        if find(dex[1],inventory[inventory.i][1]) then
         map[posstr(😋.x,😋.y)]={inventory[inventory.i][1]}
         rem(inventory,inventory.i)
         love.update=update
@@ -393,6 +394,9 @@ function plantselect()
         end
         end_turn()
         shout('')
+        else
+        shout('Can\'t plant that!')
+        end
     end
 
     t=t+1
@@ -473,6 +477,10 @@ function plant_update()
                 map[posstr(cam.x+x,cam.y+y)]=nil
                 print(posstr(cam.x+x,cam.y+y))
             end
+            if v=='☘' and #neigh<1 or #neigh>2 then
+                map[posstr(cam.x+x,cam.y+y)]=nil
+                print(posstr(cam.x+x,cam.y+y))
+            end
         end
         if not map_buffer[posstr(x,y)] then
             if findmap(neigh,v) then
@@ -488,6 +496,9 @@ function plant_update()
                 end
                 if v=='🌹' and #neigh==5 then
                     map[posstr(cam.x+x,cam.y+y)]={'🌹'}
+                end
+                if v=='☘' and #neigh==1 then
+                    map[posstr(cam.x+x,cam.y+y)]={'☘'}
                 end
             end
         end
