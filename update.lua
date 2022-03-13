@@ -12,10 +12,12 @@ function update(hw_dt)
     if tapped('.') then header.msg='' end
 
     if tapped(',') then 
-        if map[posstr(😋.x,😋.y)] then
+        if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]~='🔽' and map[posstr(😋.x,😋.y)]~='🔼' then
             ins(inventory,map[posstr(😋.x,😋.y)])
             map[posstr(😋.x,😋.y)]=nil
             shout(fmt('Picked up %s.',inventory[#inventory][1]))
+        else
+            shout('Nothing here to pick up.')
         end
         moved=true
     end
@@ -60,7 +62,7 @@ function update(hw_dt)
     if not moved and not is_solid(posstr(😋.x+1,😋.y-1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x+1,😋.y-1)))) and (tapped('kp9') or tapped('i')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y-1 end; moved=true end
     if not moved and not is_solid(posstr(😋.x+1,😋.y+1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x+1,😋.y+1)))) and (tapped('kp3') or tapped('m')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y+1 end; moved=true end
 
-    if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔽' and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) and tapped('<') then
+    if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔽' and (tapped('s') or ((love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) and tapped('<'))) then
         cam.y=cam.y-12
         if map_empty() then
             cavegen()
@@ -70,7 +72,7 @@ function update(hw_dt)
         end
         raycast()
     end
-    if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔼' and tapped('<') then
+    if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔼' and (tapped('s') or tapped('<')) then
         cam.y=cam.y+12
         local sx,sy=strpos(map[posstr(😋.x,😋.y)].entry)
         😋.x=sx; 😋.y=sy
