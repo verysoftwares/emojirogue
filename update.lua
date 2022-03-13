@@ -7,6 +7,8 @@ function update(hw_dt)
     
     if tapped('c') then love.update=talkselect; shout('Chat with whom?') end
 
+    if tapped('.') then header.msg='' end
+
     if tapped(',') then 
         if map[posstr(😋.x,😋.y)] then
             ins(inventory,map[posstr(😋.x,😋.y)])
@@ -307,19 +309,57 @@ function throwselect()
     if inventory.i>=inventory.cam+22 then inventory.cam=inventory.cam+22 end
     if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
+    throwtgt={}
+    if rays then
+    for i,v in ipairs(rays) do
+        if map[v] and is_entity(map[v][1]) then
+            ins(throwtgt,v)
+        end
+    end
+    if inventory[inventory.i][1]=='🍷' then
+    for i,v in ipairs(rays) do
+        if map[v][1]=='⛰️' then
+            ins(throwtgt,v)
+        end
+    end
+    end
+
     for i,v in ipairs(throwtgt) do
         if i>9 then break end
         if tapped(tostring(i)) then
             if inventory[inventory.i][1]=='🥛' then
+                if map[v][1]=='🗿' then
+                shout('The 🗿 resisted damage!')
+                else
                 map[v].hp=map[v].hp-2
                 shout(fmt('It hit the %s for 2 damage!',map[v][1]))
-                if map[v].hp<=0 then map[v]={wither(map[v][1])} end
+                if map[v].hp<=0 then shout(fmt('The %s withered into a %s.',map[v][1],wither(map[v][1]))); map[v]={wither(map[v][1])} end
+                end
             elseif inventory[inventory.i][1]=='☕' then
                 map[v].hp=map[v].hp+2
                 if map[v].hp>dex_nmy[map[v][1]].maxhp then
                     map[v].hp=dex_nmy[map[v][1]].maxhp
                 end
                 shout(fmt('It healed the %s!',map[v][1]))
+            elseif inventory[inventory.i][1]=='🍵' then
+                map[v].poison=4
+                shout(fmt('The %s is poisoned!',map[v][1]))
+            elseif inventory[inventory.i][1]=='🍷' then
+                map[v].hp=map[v].hp-4
+                shout(fmt('It hit the %s for 4 damage!',map[v][1]))
+                if map[v].hp<=0 then shout(fmt('The %s withered into a %s.',map[v][1],wither(map[v][1]))); map[v]={wither(map[v][1])} end
+            elseif inventory[inventory.i][1]=='🍸' then
+                shout(fmt('The %s vanishes before your eyes!',map[v][1]))
+                local empty={}
+                for y=0,12-1 do
+                for x=0,24-1 do
+                    local pos=posstr(cam.x+x,cam.y+y)
+                    if not map[pos] then ins(empty,pos) end
+                end
+                end
+                local warp=randomchoice(empty)
+                map[warp]=map[pos]
+                map[pos]=nil
             else
                 shout('It didn\'t do any damage.')
             end
@@ -428,6 +468,18 @@ function quaffselect()
         elseif inventory[inventory.i]=='🍷' then
             shout('That was a very bad idea.')
             😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover 
+        elseif inventory[inventory.i][1]=='🍸' then
+            shout('You teleport!')
+            local empty={}
+            for y=0,12-1 do
+            for x=0,24-1 do
+                local pos=posstr(cam.x+x,cam.y+y)
+                if not map[pos] then ins(empty,pos) end
+            end
+            end
+            local warp=randomchoice(empty)
+            local wx,wy=strpos(warp)
+            😋.x=wx; 😋.y=wy
         end
         rem(inventory,inventory.i)
         love.update=update

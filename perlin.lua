@@ -314,6 +314,14 @@ function generic_ai_f(id,playertarget,postupdate)
             end
         end
 
+        if 🆔.poison then
+            shout(fmt('The %s takes poison damage!',🆔[1]))
+            🆔.hp=🆔.hp-1
+            if 🆔.hp<=0 then shout(fmt('The %s withered into a %s.',map[newpos or pos][1],wither(map[newpos or pos][1]))); map[newpos or pos]={wither(🆔[1])} end
+            🆔.poison=🆔.poison-1
+            if 🆔.poison==0 then 🆔.poison=nil end
+        end
+
         if postupdate then postupdate(🆔,newpos or pos) end
     end
 end
