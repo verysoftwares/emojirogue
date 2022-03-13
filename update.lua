@@ -158,6 +158,8 @@ function craft()
     if tapped('right') then inventory.i=inventory.i+1 end
     if inventory.i>#inventory then inventory.i=1 end
     if inventory.i<1 then inventory.i=#inventory end
+    if inventory.i>=inventory.cam+22 then inventory.cam=inventory.cam+22 end
+    if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
     if tapped('z') and #inventory>0 and #craft_area<5 then 
         ins(craft_area,inventory[inventory.i])
@@ -198,7 +200,7 @@ function craft()
     t=t+1
 end
 
-inventory={i=1,{'🌱'},{'🌱'},{'🌱'},{'🥀'},{'🌱'},{'🌱'},{'🥛'}}
+inventory={i=1,cam=1,{'🌱'},{'🌱'},{'🌱'},{'🥀'},{'🌱'},{'🌱'},{'🥛'},}
 craft_area={}
 
 function raycast()
@@ -302,6 +304,8 @@ function throwselect()
     if tapped('right') then inventory.i=inventory.i+1 end
     if inventory.i>#inventory then inventory.i=1 end
     if inventory.i<1 then inventory.i=#inventory end
+    if inventory.i>=inventory.cam+22 then inventory.cam=inventory.cam+22 end
+    if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
     for i,v in ipairs(throwtgt) do
         if i>9 then break end
@@ -377,6 +381,8 @@ function plantselect()
     if tapped('right') then inventory.i=inventory.i+1 end
     if inventory.i>#inventory then inventory.i=1 end
     if inventory.i<1 then inventory.i=#inventory end
+    if inventory.i>=inventory.cam+22 then inventory.cam=inventory.cam+22 end
+    if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
     if tapped('return') then
         map[posstr(😋.x,😋.y)]={inventory[inventory.i][1]}
@@ -399,6 +405,8 @@ function quaffselect()
     if tapped('right') then inventory.i=inventory.i+1 end
     if inventory.i>#inventory then inventory.i=1 end
     if inventory.i<1 then inventory.i=#inventory end
+    if inventory.i>=inventory.cam+22 then inventory.cam=inventory.cam+22 end
+    if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
     if tapped('return') then
         if inventory[inventory.i]=='🥛' then
@@ -409,7 +417,7 @@ function quaffselect()
             local oldhp=😋.hp
             😋.hp=😋.hp+6
             if 😋.hp>9 then 😋.hp=9 end
-            shout(fmt('Healed %d hit points!',))
+            shout(fmt('Healed %d hit points!',😋.hp-oldhp))
         elseif inventory[inventory.i]=='🍵' then
             😋.poison=4
             shout('Yuck, poison!')

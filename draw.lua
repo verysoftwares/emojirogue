@@ -106,25 +106,45 @@ function draw()
         end
         for dx=0,24-1 do
             fg(0.8,0.8,0.8)
-            if dx==inventory.i then fg(0.4,0.8,0.4) end
+            if dx==inventory.i-inventory.cam+1 then fg(0.4,0.8,0.4) end
             rect('fill',16+dx*64,16+11*(64+11),64,64+11)
         end
-        for i,v in ipairs(inventory) do
-            gridprint(v[1],i,11,false,true)
-            if i>=22 then break end
-        end        
+        for i=inventory.cam,inventory.cam+22-1 do
+            local v=inventory[i]
+            if v then
+            gridprint(v[1],i-inventory.cam+1,11,false,true)
+            else break end
+        end
+       
+    end
+
+    if love.update==quaffselect then
+        for dx=0,24-1 do
+            fg(0.8,0.8,0.8)
+            if dx==inventory.i-inventory.cam+1 then fg(0.4,0.8,0.4) end
+            rect('fill',16+dx*64,16+11*(64+11),64,64+11)
+        end
+        for i=inventory.cam,inventory.cam+22-1 do
+            local v=inventory[i]
+            if v then
+            gridprint(v[1],i-inventory.cam+1,11,false,true)
+            else break end
+        end
     end
 
     if love.update==plantselect then
         for dx=0,24-1 do
             fg(0.8,0.8,0.8)
-            if dx==inventory.i then fg(0.4,0.8,0.4) end
+            if dx==inventory.i-inventory.cam+1 then fg(0.4,0.8,0.4) end
             rect('fill',16+dx*64,16+11*(64+11),64,64+11)
         end
-        for i,v in ipairs(inventory) do
-            gridprint(v[1],i,11,false,true)
-            if i>=22 then break end
+        for i=inventory.cam,inventory.cam+22-1 do
+            local v=inventory[i]
+            if v then
+            gridprint(v[1],i-inventory.cam+1,11,false,true)
+            else break end
         end
+
     end
 
     if love.update==dialogue then
@@ -162,16 +182,18 @@ function draw()
             fg(0.2,0.2,0.6)
             if (dy==9 and dx>0 and dx<=5) or dy==11 then fg(0.8,0.8,0.8) end
             if dy==8 then fg(palettes[8]) end
-            if dy==11 and dx==inventory.i then fg(0.4,0.8,0.4) end
+            if dy==11 and dx==inventory.i-inventory.cam+1 then fg(0.4,0.8,0.4) end
             rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
         end
         end
         for i,v in ipairs(craft_area) do
             gridprint(v[1],i,9,true)
         end
-        for i,v in ipairs(inventory) do
-            gridprint(v[1],i,11,true)
-            if i>=22 then break end
+        for i=inventory.cam,inventory.cam+22-1 do
+            local v=inventory[i]
+            if v then
+            gridprint(v[1],i-inventory.cam+1,11,true)
+            else break end
         end
         fg(0.2,0.2,0.6)
         gridprint('Craft:',1,8,true,true)
