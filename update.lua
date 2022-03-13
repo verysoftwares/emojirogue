@@ -1,5 +1,7 @@
 😋 = {'😋',x=20+6+2,y=3+1,hp=9}
 turn=0
+withered=0
+crafted=0
 
 function update(hw_dt)
     --if tapped('r') then love.event.quit('restart') end
@@ -49,14 +51,14 @@ function update(hw_dt)
         --end
     end
 
-    if not moved and not is_solid(posstr(😋.x,😋.y-1)) and (tapped('up') or tapped('kp8') or tapped('u'))    then if not 😋.webbed then 😋.y=😋.y-1 end; moved=true end
-    if not moved and not is_solid(posstr(😋.x,😋.y+1)) and (tapped('down') or tapped('kp2') or tapped('n'))  then if not 😋.webbed then 😋.y=😋.y+1 end; moved=true end
-    if not moved and not is_solid(posstr(😋.x-1,😋.y)) and (tapped('left') or tapped('kp4') or tapped('h'))  then if not 😋.webbed then 😋.x=😋.x-1 end; moved=true end
-    if not moved and not is_solid(posstr(😋.x+1,😋.y)) and (tapped('right') or tapped('kp6') or tapped('k')) then if not 😋.webbed then 😋.x=😋.x+1 end; moved=true end
-    if not moved and not is_solid(posstr(😋.x-1,😋.y-1)) and (tapped('kp7') or tapped('y')) then if not 😋.webbed then 😋.x=😋.x-1; 😋.y=😋.y-1 end; moved=true end
-    if not moved and not is_solid(posstr(😋.x-1,😋.y+1)) and (tapped('kp1') or tapped('b')) then if not 😋.webbed then 😋.x=😋.x-1; 😋.y=😋.y+1 end; moved=true end
-    if not moved and not is_solid(posstr(😋.x+1,😋.y-1)) and (tapped('kp9') or tapped('i')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y-1 end; moved=true end
-    if not moved and not is_solid(posstr(😋.x+1,😋.y+1)) and (tapped('kp3') or tapped('m')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y+1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x,😋.y-1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x,😋.y-1)))) and (tapped('up') or tapped('kp8') or tapped('u'))    then if not 😋.webbed then 😋.y=😋.y-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x,😋.y+1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x,😋.y+1)))) and (tapped('down') or tapped('kp2') or tapped('n'))  then if not 😋.webbed then 😋.y=😋.y+1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x-1,😋.y)))) and (tapped('left') or tapped('kp4') or tapped('h'))  then if not 😋.webbed then 😋.x=😋.x-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x+1,😋.y)))) and (tapped('right') or tapped('kp6') or tapped('k')) then if not 😋.webbed then 😋.x=😋.x+1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y-1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x-1,😋.y-1)))) and (tapped('kp7') or tapped('y')) then if not 😋.webbed then 😋.x=😋.x-1; 😋.y=😋.y-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x-1,😋.y+1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x-1,😋.y+1)))) and (tapped('kp1') or tapped('b')) then if not 😋.webbed then 😋.x=😋.x-1; 😋.y=😋.y+1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y-1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x+1,😋.y-1)))) and (tapped('kp9') or tapped('i')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y-1 end; moved=true end
+    if not moved and not is_solid(posstr(😋.x+1,😋.y+1)) and (not in_dungeon() or (in_dungeon() and not oob(posstr(😋.x+1,😋.y+1)))) and (tapped('kp3') or tapped('m')) then if not 😋.webbed then 😋.x=😋.x+1; 😋.y=😋.y+1 end; moved=true end
 
     if map[posstr(😋.x,😋.y)] and map[posstr(😋.x,😋.y)][1]=='🔽' and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) and tapped('<') then
         cam.y=cam.y-12
@@ -73,6 +75,15 @@ function update(hw_dt)
         local sx,sy=strpos(map[posstr(😋.x,😋.y)].entry)
         😋.x=sx; 😋.y=sy
         raycast()
+        if in_dungeon() then
+        filled={}
+        for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
+            if not is_solid(posstr(x,y)) and not findany(filled,posstr(x,y)) then
+                floodfill(x,y)
+            end
+        end end
+        enemygen(true)
+        end
     end
 
     if moved and not 😋.webbed then
@@ -147,7 +158,7 @@ diag_db={
     ['baobab_dungeon']={{'🅱🅾🅱🅾 🆎🅾⛰ 🅰🆎🅾🅱🅰🔽 🆎🅰 🅱🅰🅱🅱🅰🅾💰'}},
 }
 
-header={msg='Hello world!'}
+header={msg='Hello world!',t=0}
 function shout(msg)
     if t==header.t then header.msg=fmt('%s %s',header.msg,msg)
     else header.msg=msg end
@@ -187,6 +198,7 @@ function craft()
                         else
                         ins(inventory,deepcopy(r))
                         shout(fmt('Crafted %s',r.name))
+                        crafted=crafted+1
                         goto success
                         end
                     end
@@ -312,7 +324,7 @@ function throwselect()
     if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
     throwtgt={}
-    if rays then
+    if rays and in_dungeon() then
     for i,v in ipairs(rays) do
         if map[v] and is_entity(map[v][1]) then
             ins(throwtgt,v)
@@ -337,7 +349,7 @@ function throwselect()
                 else
                 map[v].hp=map[v].hp-2
                 shout(fmt('It hit the %s for 2 damage!',map[v][1]))
-                if map[v].hp<=0 then shout(fmt('The %s withered into a %s.',map[v][1],wither(map[v][1]))); map[v]={wither(map[v][1])} end
+                if map[v].hp<=0 then withered=withered+1; shout(fmt('The %s withered into a %s.',map[v][1],wither(map[v][1]))); map[v]={wither(map[v][1])} end
                 end
             elseif inventory[inventory.i][1]=='☕' then
                 map[v].hp=map[v].hp+2
@@ -355,7 +367,7 @@ function throwselect()
                 else
                 map[v].hp=map[v].hp-4
                 shout(fmt('It hit the %s for 4 damage!',map[v][1]))
-                if map[v].hp<=0 then shout(fmt('The %s withered into a %s.',map[v][1],wither(map[v][1]))); map[v]={wither(map[v][1])} end
+                if map[v].hp<=0 then withered=withered+1; shout(fmt('The %s withered into a %s.',map[v][1],wither(map[v][1]))); map[v]={wither(map[v][1])} end
                 end
             elseif inventory[inventory.i][1]=='🍸' then
                 shout(fmt('The %s vanishes before your eyes!',map[v][1]))
@@ -381,7 +393,7 @@ function throwselect()
 end
 
 function end_turn()
-    header.msg=''
+    if header.t<t then header.msg='' end
 
     local old_cam={x=cam.x,y=cam.y}
     if 😋.y>=cam.y+12 then cam.y=cam.y+12 end
@@ -462,19 +474,19 @@ function quaffselect()
     if inventory.i<inventory.cam then inventory.cam=inventory.cam-22 end
 
     if tapped('return') then
-        if inventory[inventory.i]=='🥛' then
+        if inventory[inventory.i][1]=='🥛' then
             😋.hp=😋.hp-2
             shout('Ouch!')
             if 😋.hp<=0 then 😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover end
-        elseif inventory[inventory.i]=='☕' then
+        elseif inventory[inventory.i][1]=='☕' then
             local oldhp=😋.hp
             😋.hp=😋.hp+6
             if 😋.hp>9 then 😋.hp=9 end
             shout(fmt('Healed %d hit points!',😋.hp-oldhp))
-        elseif inventory[inventory.i]=='🍵' then
+        elseif inventory[inventory.i][1]=='🍵' then
             😋.poison=4
             shout('Yuck, poison!')
-        elseif inventory[inventory.i]=='🍷' then
+        elseif inventory[inventory.i][1]=='🍷' then
             shout('That was a very bad idea.')
             😋[1]='🌱'; shout('You wither into a 🌱.'); love.update=gameover 
         elseif inventory[inventory.i][1]=='🍸' then

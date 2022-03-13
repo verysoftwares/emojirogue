@@ -98,14 +98,27 @@ end
 map={}
 for y=0,12-1 do for x=0,24-1 do
     --map[posstr(x,y)]= {dex[1][flr(perlin(y*.1,x*.1,2472472)*#dex[1])+1]}
-    if perlin(y*.35,x*.35,24724)<0.45 then map[posstr(x,y)]={'🌲'} end
+    if perlin(y*.35,x*.35,seed)<0.45 then map[posstr(x,y)]={'🌲'} end
 end end
 for y=0,12-1 do for x=24*2,24*3-1 do
-    if perlin(y*.35,x*.35,24724)<0.45 then map[posstr(x,y)]={'🌲'} end
+    if perlin(y*.35,x*.35,seed)<0.45 then map[posstr(x,y)]={'🌲'} end
 end end
 for y=12,12*2-1 do for x=24,24*2-1 do
-    if perlin(y*.35,x*.35,24724)<0.45 then map[posstr(x,y)]={'🌲'} end
+    if perlin(y*.35,x*.35,seed)<0.45 then map[posstr(x,y)]={'🌲'} end
 end end
+for x=0,24-1 do
+    map[posstr(x,0)]={'🌲'}
+    map[posstr(x,12-1)]={'🌲'}
+    map[posstr(x+24*2,0)]={'🌲'}
+    map[posstr(x+24*2,12-1)]={'🌲'}
+    map[posstr(x+24,0+12+12-1)]={'🌲'}
+end
+for y=0,12-1 do
+    map[posstr(0,y)]={'🌲'}
+    map[posstr(24*2+24-1,y)]={'🌲'}
+    map[posstr(24,12+y)]={'🌲'}
+    map[posstr(24+24-1,12+y)]={'🌲'}
+end
 
 for my=0,4 do
 for mx=0,4 do
@@ -147,7 +160,7 @@ function is_seethru(pos)
 end
 
 function is_entity(e)
-    return e=='🐴' or e=='🐍' or e=='🕷'
+    return e=='🐴' or e=='🐍' or e=='🕷' or e=='👺' or e=='🐜' or e=='🗿'
 end
 
 function is_plant(e)
@@ -203,13 +216,13 @@ end
 
 function cavegen()
     for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
-        if perlin(y*.35,x*.35,24724)<0.5 then
+        if perlin(y*.35,x*.35,seed)<0.5 then
         map[posstr(x,y)]= {'⛰️'}
         end
     end end
     filled={}
     for y=cam.y,cam.y+12-1 do for x=cam.x,cam.x+24-1 do
-        if not map[posstr(x,y)] and not findany(filled,posstr(x,y)) then
+        if not is_solid(posstr(x,y)) and not findany(filled,posstr(x,y)) then
             floodfill(x,y)
         end
     end end
@@ -245,23 +258,23 @@ function plantgen()
 
     for i,v in ipairs(filled[1]) do
     local x,y=strpos(v)
-    if perlin(y*.35,x*.35,24724)>0.7 then
-    map[posstr(x,y)]= randomchoice(plant_list)
+    if perlin(y*.35,x*.35,seed)>0.7 then
+    map[posstr(x,y)]= {randomchoice(plant_list)}
     end
     end
     for i,f in ipairs(filled) do
         if i>=2 then
             for j,v in ipairs(f) do
                 local x,y=strpos(v)
-                if perlin(y*.35,x*.35,24724)>0.55 then
-                map[posstr(x,y)]= randomchoice(plant_list)
+                if perlin(y*.35,x*.35,seed)>0.55 then
+                map[posstr(x,y)]= {randomchoice(plant_list)}
                 end
             end
         end
     end
 end
 
-function enemygen()
+function enemygen(returntrip)
     local enemy_list={'🐍'}
     if dungeonlevel()>=2 then ins(enemy_list,'🐍'); ins(enemy_list,'🕷') end
     if dungeonlevel()>=3 then ins(enemy_list,'🕷') end
@@ -270,8 +283,21 @@ function enemygen()
     if dungeonlevel()>=6 then rem(enemy_list,find(enemy_list,'🕷')); rem(enemy_list,find(enemy_list,'👺')); ins(enemy_list,'🐜') end
     if dungeonlevel()>=7 then ins(enemy_list,'🐜'); ins(enemy_list,'🗿') end
     if dungeonlevel()>=8 then rem(enemy_list,find(enemy_list,'👺')); ins(enemy_list,'🗿') end
-    
-    for i=2,random(2,4) do
+    if dungeonlevel()==9 and not demoshout then shout('This is the end of the demo, there\'s no new content beyond this point. Thanks for playing!'); demoshout=true end
+
+    local min=1
+    local max=random(2,4)
+    if returntrip then
+        print(true)
+        for y=0,12-1 do for x=0,24-1 do 
+            if map[posstr(cam.x+x,cam.y+y)] and is_entity(map[posstr(cam.x+x,cam.y+y)][1]) then
+                min=min+1
+                print(min)
+                --max=max-1
+            end
+        end end
+    end
+    for i=min,max do
         s=random(#filled[1])
         local 🆔pos=filled[1][s]
         rem(filled[1],s)
@@ -327,8 +353,8 @@ function generic_ai_f(id,playertarget,postupdate)
         end
         if 🆔.state=='located' then
             if #🆔.path>0 then
-                newpos=🆔.path[1]
-                if not is_solid(newpos) and not 😋collide(newpos) then
+                if not is_solid(🆔.path[1]) and not 😋collide(🆔.path[1]) then
+                    newpos=🆔.path[1]
                     rem(🆔.path,1)
                     map[pos]=nil
                     if map[newpos]~=nil then
@@ -341,7 +367,7 @@ function generic_ai_f(id,playertarget,postupdate)
                     
                     enemy_raycast(newpos)
                 else
-                    enemy_raycast(newpos or pos)
+                    enemy_raycast(pos)
                 end
             else
                 print(fmt('nmy @ %s is bored.',pos))
@@ -354,7 +380,7 @@ function generic_ai_f(id,playertarget,postupdate)
         if 🆔.poison then
             shout(fmt('The %s takes poison damage!',🆔[1]))
             🆔.hp=🆔.hp-1
-            if 🆔.hp<=0 then shout(fmt('The %s withered into a %s.',map[newpos or pos][1],wither(map[newpos or pos][1]))); map[newpos or pos]={wither(🆔[1])} end
+            if 🆔.hp<=0 then withered=withered+1; shout(fmt('The %s withered into a %s.',map[newpos or pos][1],wither(map[newpos or pos][1]))); map[newpos or pos]={wither(🆔[1])} end
             🆔.poison=🆔.poison-1
             if 🆔.poison==0 then 🆔.poison=nil end
         end
@@ -418,14 +444,14 @@ function floodfill(cx,cy)
     local out={posstr(cx,cy)}
     for i,v in ipairs(out) do
         local px,py=strpos(v)
-        if px-1>=cam.x and not map[posstr(px-1,py)] and not find(out,posstr(px-1,py)) then ins(out,posstr(px-1,py)) end
-        if px-1>=cam.x and py-1>=cam.y and not map[posstr(px-1,py-1)] and not find(out,posstr(px-1,py-1)) then ins(out,posstr(px-1,py-1)) end
-        if py-1>=cam.y and not map[posstr(px,py-1)] and not find(out,posstr(px,py-1)) then ins(out,posstr(px,py-1)) end
-        if px+1<cam.x+24 and py-1>=cam.y and not map[posstr(px+1,py-1)] and not find(out,posstr(px+1,py-1)) then ins(out,posstr(px+1,py-1)) end
-        if px+1<cam.x+24 and not map[posstr(px+1,py)] and not find(out,posstr(px+1,py)) then ins(out,posstr(px+1,py)) end
-        if px+1<cam.x+24 and py+1<cam.y+12 and not map[posstr(px+1,py+1)] and not find(out,posstr(px+1,py+1)) then ins(out,posstr(px+1,py+1)) end
-        if py+1<cam.y+12 and not map[posstr(px,py+1)] and not find(out,posstr(px,py+1)) then ins(out,posstr(px,py+1)) end
-        if px-1>=cam.x and py+1<cam.y+12 and not map[posstr(px-1,py+1)] and not find(out,posstr(px-1,py+1)) then ins(out,posstr(px-1,py+1)) end
+        if px-1>=cam.x and not is_solid(posstr(px-1,py)) and not find(out,posstr(px-1,py)) then ins(out,posstr(px-1,py)) end
+        if px-1>=cam.x and py-1>=cam.y and not is_solid(posstr(px-1,py-1)) and not find(out,posstr(px-1,py-1)) then ins(out,posstr(px-1,py-1)) end
+        if py-1>=cam.y and not is_solid(posstr(px,py-1)) and not find(out,posstr(px,py-1)) then ins(out,posstr(px,py-1)) end
+        if px+1<cam.x+24 and py-1>=cam.y and not is_solid(posstr(px+1,py-1)) and not find(out,posstr(px+1,py-1)) then ins(out,posstr(px+1,py-1)) end
+        if px+1<cam.x+24 and not is_solid(posstr(px+1,py)) and not find(out,posstr(px+1,py)) then ins(out,posstr(px+1,py)) end
+        if px+1<cam.x+24 and py+1<cam.y+12 and not is_solid(posstr(px+1,py+1)) and not find(out,posstr(px+1,py+1)) then ins(out,posstr(px+1,py+1)) end
+        if py+1<cam.y+12 and not is_solid(posstr(px,py+1)) and not find(out,posstr(px,py+1)) then ins(out,posstr(px,py+1)) end
+        if px-1>=cam.x and py+1<cam.y+12 and not is_solid(posstr(px-1,py+1)) and not find(out,posstr(px-1,py+1)) then ins(out,posstr(px-1,py+1)) end
     end
     ins(filled,out)
     table.sort(filled,function(a,b) return #a>#b end)

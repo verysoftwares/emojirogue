@@ -94,6 +94,7 @@ function draw()
     gridprint(header.msg)
     
     if love.update==throwselect then
+        if throwtgt then
         for i,k in ipairs(throwtgt) do
             if i>9 then break end
             if (t+i*8)%48<32 then
@@ -103,6 +104,7 @@ function draw()
             fg(0.8,0.8,0.8)
             gridprint(tostring(i),kx-cam.x,ky-cam.y,false,true)
             end
+        end
         end
         for dx=0,24-1 do
             fg(0.8,0.8,0.8)
@@ -115,7 +117,7 @@ function draw()
             gridprint(v[1],i-inventory.cam+1,11,false,true)
             else break end
         end
-       
+        gridprint(fmt('HP: %d/9',😋.hp),😋.x-cam.x-3,😋.y-cam.y+1)
     end
 
     if love.update==quaffselect then
@@ -130,6 +132,7 @@ function draw()
             gridprint(v[1],i-inventory.cam+1,11,false,true)
             else break end
         end
+        gridprint(fmt('HP: %d/9',😋.hp),😋.x-cam.x-3,😋.y-cam.y+1)
     end
 
     if love.update==plantselect then
@@ -214,6 +217,21 @@ function draw()
         gridprint('Craft:',1,8,true,true)
         gridprint('Recipes:',1,1,true,true)
         fg(r,g,b,a)
+    end
+
+    if love.update==gameover then
+        for dy=7,12-1 do
+        for dx=0,24-1 do
+            fg(0.2,0.2,0.6)
+            rect('fill',16+dx*64,16+dy*(64+11),64,64+11)
+        end
+        end
+        fg(0.8,0.8,0.8)
+        gridprint(fmt('Seed: %d',seed),1,7,false,true)
+        gridprint(fmt('Turns taken: %d',turn),1,8,false,true)
+        gridprint(fmt('Enemies withered: %d',withered),1,9,false,true)
+        gridprint(fmt('Potions crafted: %d',crafted),1,10,false,true)
+        gridprint('R to reset.',1,11,false,true)
     end
 end
 
