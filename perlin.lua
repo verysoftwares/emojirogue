@@ -167,6 +167,10 @@ function is_plant(e)
     return find(dex[1],e)
 end
 
+function is_passable(pos)
+    return not map[pos] or (map[pos][1]~='🧱' and map[pos][1]~='⛰️' and map[pos][1]~='🔼' and map[pos][1]~='🔽')
+end
+
 function oob(pos)
     local px,py=strpos(pos)
     return px<cam.x or py<cam.y or px>=cam.x+24 or py>=cam.y+12
@@ -367,7 +371,7 @@ function generic_ai_f(id,playertarget,postupdate)
                     
                     enemy_raycast(newpos)
                 else
-                    enemy_raycast(pos)
+                    enemy_raycast(newpos or pos)
                 end
             else
                 print(fmt('nmy @ %s is bored.',pos))
